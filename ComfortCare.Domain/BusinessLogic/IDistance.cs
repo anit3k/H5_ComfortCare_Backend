@@ -5,6 +5,6 @@
     /// </summary>
     public interface IDistance
     {
-        public (float DistanceInSeconds, float DistanceInMeters) GetDistance(string startLongitude, string startLatitude, string endLongitude, string endLatitude);
+        public Task<(double DistanceInSeconds, double DistanceInMeters)> GetDistance(string startLongitude, string startLatitude, string endLongitude, string endLatitude);
     }
 }
