@@ -14,4 +14,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ComfortCare.Service\ComfortCare.Service.csproj" />
+  </ItemGroup>
+
 </Project>
