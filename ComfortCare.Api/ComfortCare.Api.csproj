@@ -11,10 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\ComfortCare.Domain\ComfortCare.Domain.csproj" />
     <ProjectReference Include="..\ComfortCare.Service\ComfortCare.Service.csproj" />
   </ItemGroup>
 
