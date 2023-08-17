@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ComfortCare.Data\ComfortCare.Data.csproj" />
     <ProjectReference Include="..\ComfortCare.Domain\ComfortCare.Domain.csproj" />
     <ProjectReference Include="..\ComfortCare.Service\ComfortCare.Service.csproj" />
   </ItemGroup>

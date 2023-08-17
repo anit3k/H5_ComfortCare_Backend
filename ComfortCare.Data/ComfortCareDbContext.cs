@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComfortCare.Data
 {
-    public partial class ComfortCareContext : DbContext
+    public partial class ComfortCareDbContext : DbContext
     {
-        public ComfortCareContext()
+        public ComfortCareDbContext()
         {
         }
 
-        public ComfortCareContext(DbContextOptions<ComfortCareContext> options)
+        public ComfortCareDbContext(DbContextOptions<ComfortCareDbContext> options)
             : base(options)
         {
         }

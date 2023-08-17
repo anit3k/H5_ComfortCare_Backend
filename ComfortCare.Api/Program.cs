@@ -1,3 +1,4 @@
+using ComfortCare.Data;
 using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Service;
 
@@ -8,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<IDistance, RouteDistanceAPI>();
+builder.Services.AddTransient<IRepo, RouteRepo>();
+builder.Services.AddTransient<IValidate, Validate>();
+//builder.Services.
 
 var app = builder.Build();
 
