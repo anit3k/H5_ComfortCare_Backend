@@ -1,0 +1,119 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "ComfortCareContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "ComfortCare.Data",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 1,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Assignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AssignmentType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Citizen]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CitizenAssignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DayType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Distance]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Employee]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeePreference]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeeRoute]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeeSkill]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeeStatementPeriod]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeeType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeeWorkSchedule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Preference]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Residence]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RouteCitizenAssignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Skill]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StatementPeriod]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TimeRegistration]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WorkingTimespan]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "033a1e4167a4.ComfortCare.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
