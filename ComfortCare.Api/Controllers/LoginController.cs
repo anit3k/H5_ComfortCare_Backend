@@ -28,7 +28,7 @@ namespace ComfortCare.Api.Controllers
             // TODO: make validation on user
             // TODO: get and return schedule for user
 
-            return Ok(new employeeScheduleDto() { Schema = "This is your schema!"});
+            return Ok(new employeeScheduleDto() { });
         }
         #endregion
 
