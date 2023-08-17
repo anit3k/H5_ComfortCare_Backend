@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<IDistance, RouteDistanceAPI>();
 builder.Services.AddTransient<IRepo, RouteRepo>();
 builder.Services.AddTransient<IValidate, Validate>();
-//builder.Services.
+builder.Services.AddTransient<IGetSchema, GetSchema>();
 
 var app = builder.Build();
 

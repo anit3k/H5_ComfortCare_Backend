@@ -14,12 +14,14 @@ namespace ComfortCare.Api.Controllers
     {
         #region fields
         private readonly IValidate _validator;
+        private readonly IGetSchema _schema;
         #endregion
 
         #region Constructor
-        public LoginController(IValidate validator)
+        public LoginController(IValidate validator, IGetSchema schema)
         {
             _validator = validator;
+            _schema = schema;
         }
         #endregion
 
