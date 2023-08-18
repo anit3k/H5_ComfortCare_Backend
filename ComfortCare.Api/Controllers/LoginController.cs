@@ -1,4 +1,5 @@
 ﻿using ComfortCare.Api.Models;
+using ComfortCare.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -12,12 +13,15 @@ namespace ComfortCare.Api.Controllers
     public class LoginController : ControllerBase
     {
         #region fields
+        private readonly IValidate _validator;
+        private readonly IGetSchema _schema;
         #endregion
 
-        #region
-        public LoginController()
+        #region Constructor
+        public LoginController(IValidate validator, IGetSchema schema)
         {
-            
+            _validator = validator;
+            _schema = schema;
         }
         #endregion
 
@@ -28,7 +32,7 @@ namespace ComfortCare.Api.Controllers
             // TODO: make validation on user
             // TODO: get and return schedule for user
 
-            return Ok(new employeeScheduleDto() { });
+            return Ok(new EmployeeScheduleDto() { });
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using ComfortCare.Api.Models;
+using ComfortCare.Domain.BusinessLogic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -12,13 +13,13 @@ namespace ComfortCare.Api.Controllers
     public class PeriodController : ControllerBase
     {
         #region fields
-
+        private readonly IPlanManager _manager;
         #endregion
 
         #region Constructor
-        public PeriodController()
+        public PeriodController(IPlanManager manager)
         {
-            
+            _manager = manager;
         }
         #endregion
 
@@ -31,7 +32,7 @@ namespace ComfortCare.Api.Controllers
                 return BadRequest("Invalid date range. The period should be between 1 day and 16 weeks.");
             }
             return Ok(periodDto);
-        }
+        }               
         #endregion
 
         #region Methods
