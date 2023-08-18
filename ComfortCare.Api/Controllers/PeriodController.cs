@@ -18,7 +18,7 @@ namespace ComfortCare.Api.Controllers
         #region Constructor
         public PeriodController()
         {
-            
+            // TODO: change class diagram and inject the plan manager as IPlanManager ore something like that
         }
         #endregion
 

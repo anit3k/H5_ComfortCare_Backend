@@ -3,7 +3,7 @@
     /// <summary>
     /// This dto is used for the data/schema to the employee when logging in
     /// </summary>
-    public class employeeScheduleDto
+    public class EmployeeScheduleDto
     {
         #region Properties
         public string Name { get; set; }

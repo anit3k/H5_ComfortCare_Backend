@@ -37,9 +37,15 @@ namespace ComfortCare.Api.Controllers
         #endregion
 
         #region Methods
-        employeeScheduleDto GenerateDummyData()
+        /// <summary>
+        /// This method is use to create dummy data in the development phase for the frontend,
+        /// it do not get any information from Db, it uses random add static data to simulate the
+        /// data need in the view for the users
+        /// </summary>
+        /// <returns>a data transfer object with dummy content in the development phase</returns>
+        private EmployeeScheduleDto GenerateDummyData()
         {
-            var result = new employeeScheduleDto
+            var result = new EmployeeScheduleDto
             {
                 Name = "Fiktiv bruger",
                 Assignments = new List<AssignmentDTO>()
@@ -73,16 +79,16 @@ namespace ComfortCare.Api.Controllers
             var startDate = DateTime.Now.Date;
             var random = new Randomizer();
 
-            for (int i = 0; i < 7; i++)
+            for (int days = 0; days < 7; days++)
             {
-                foreach (var citizenName in citizenNames)
+                for (int assignmentsPrDay = 0; assignmentsPrDay < 5; assignmentsPrDay++)
                 {
                     var assignment = new AssignmentDTO
                     {
                         Titel = assignmentTitles[random.Number(0, assignmentTitles.Length - 1)],
                         Description = lorem.Paragraphs(2),
                         StartDate = startDate.AddHours(random.Number(0, 23)).AddMinutes(random.Number(0, 59)),
-                        CitizenName = citizenName,
+                        CitizenName = citizenNames[random.Number(0, citizenNames.Length - 1)],
                         Address = addresses[random.Number(0, addresses.Length - 1)],
                         TimeSpan = random.Number(600, 1800),
                     };

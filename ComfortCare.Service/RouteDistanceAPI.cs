@@ -9,12 +9,18 @@ namespace ComfortCare.Service
     /// </summary>
     public class RouteDistanceAPI : IDistance
     {
+        #region fields
         private readonly HttpClient _httpClient;
+        #endregion
 
+        #region Constructor
         public RouteDistanceAPI(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// This method returns the distance from a to b in seconds and meters in a float datatype.
@@ -51,7 +57,9 @@ namespace ComfortCare.Service
 
             throw new InvalidOperationException("Failed to parse API response.");
         }
+        #endregion
 
+        #region Private classes used to convert data in the distance api
         // these records are only used for the open api for getting the distance and duration
         private record ApiResponse(List<Route> Routes, Metadata Metadata);
 
@@ -62,5 +70,6 @@ namespace ComfortCare.Service
         private record Metadata(Query Query);
 
         private record Query(List<List<double>> Coordinates, string Profile, string Preference);
+        #endregion
     }    
 }
