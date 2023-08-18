@@ -9,10 +9,10 @@ namespace ComfortCare.Domain.Entities
     {
         public Employee()
         {
+            EmployeeEmployeeRoute = new HashSet<EmployeeEmployeeRoute>();
+            EmployeePreference = new HashSet<EmployeePreference>();
             EmployeeSkill = new HashSet<EmployeeSkill>();
             EmployeeStatementPeriod = new HashSet<EmployeeStatementPeriod>();
-            EmployeeRoute = new HashSet<EmployeeRoute>();
-            Preference = new HashSet<Preference>();
         }
 
         public int Id { get; set; }
@@ -21,12 +21,12 @@ namespace ComfortCare.Domain.Entities
         public string EmployeeName { get; set; }
         public int WeeklyWorkingHours { get; set; }
         public int EmployeeTypeId { get; set; }
-        public int SkillId { get; set; }
+        public int? SkillId { get; set; }
 
+        public virtual EmployeeType EmployeeType { get; set; }
+        public virtual ICollection<EmployeeEmployeeRoute> EmployeeEmployeeRoute { get; set; }
+        public virtual ICollection<EmployeePreference> EmployeePreference { get; set; }
         public virtual ICollection<EmployeeSkill> EmployeeSkill { get; set; }
         public virtual ICollection<EmployeeStatementPeriod> EmployeeStatementPeriod { get; set; }
-
-        public virtual ICollection<EmployeeRoute> EmployeeRoute { get; set; }
-        public virtual ICollection<Preference> Preference { get; set; }
     }
 }

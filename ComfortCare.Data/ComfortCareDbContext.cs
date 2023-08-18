@@ -19,10 +19,11 @@ namespace ComfortCare.Data
         public virtual DbSet<Assignment> Assignment { get; set; }
         public virtual DbSet<AssignmentType> AssignmentType { get; set; }
         public virtual DbSet<Citizen> Citizen { get; set; }
-        public virtual DbSet<CitizenAssignment> CitizenAssignment { get; set; }
         public virtual DbSet<DayType> DayType { get; set; }
         public virtual DbSet<Distance> Distance { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
+        public virtual DbSet<EmployeeEmployeeRoute> EmployeeEmployeeRoute { get; set; }
+        public virtual DbSet<EmployeePreference> EmployeePreference { get; set; }
         public virtual DbSet<EmployeeRoute> EmployeeRoute { get; set; }
         public virtual DbSet<EmployeeSkill> EmployeeSkill { get; set; }
         public virtual DbSet<EmployeeStatementPeriod> EmployeeStatementPeriod { get; set; }
@@ -31,6 +32,7 @@ namespace ComfortCare.Data
         public virtual DbSet<Residence> Residence { get; set; }
         public virtual DbSet<Skill> Skill { get; set; }
         public virtual DbSet<StatementPeriod> StatementPeriod { get; set; }
+        public virtual DbSet<TimeFrame> TimeFrame { get; set; }
         public virtual DbSet<TimeRegistration> TimeRegistration { get; set; }
         public virtual DbSet<WorkingTimespan> WorkingTimespan { get; set; }
 
@@ -42,17 +44,45 @@ namespace ComfortCare.Data
 
                 entity.Property(e => e.AssignmentTypeId).HasColumnName("AssignmentTypeID");
 
-                entity.Property(e => e.DayOfAssignment).HasColumnType("datetime");
+                entity.Property(e => e.CitizenId).HasColumnName("CitizenID");
 
-                entity.Property(e => e.TimeFrameEnd).HasColumnType("datetime");
+                entity.Property(e => e.EmployeeSkillId).HasColumnName("EmployeeSkillID");
 
-                entity.Property(e => e.TimeFrameStart).HasColumnType("datetime");
+                entity.Property(e => e.EmployeeTypeMasterId).HasColumnName("EmployeeTypeMasterID");
+
+                entity.Property(e => e.EmployeeTypeSlaveId).HasColumnName("EmployeeTypeSlaveID");
+
+                entity.Property(e => e.TimeFrameId).HasColumnName("TimeFrameID");
 
                 entity.HasOne(d => d.AssignmentType)
                     .WithMany(p => p.Assignment)
                     .HasForeignKey(d => d.AssignmentTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Assignmen__Assig__412EB0B6");
+                    .HasConstraintName("FK__Assignmen__Assig__45F365D3");
+
+                entity.HasOne(d => d.Citizen)
+                    .WithMany(p => p.Assignment)
+                    .HasForeignKey(d => d.CitizenId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Assignmen__Citiz__4222D4EF");
+
+                entity.HasOne(d => d.EmployeeTypeMaster)
+                    .WithMany(p => p.AssignmentEmployeeTypeMaster)
+                    .HasForeignKey(d => d.EmployeeTypeMasterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Assignmen__Emplo__440B1D61");
+
+                entity.HasOne(d => d.EmployeeTypeSlave)
+                    .WithMany(p => p.AssignmentEmployeeTypeSlave)
+                    .HasForeignKey(d => d.EmployeeTypeSlaveId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Assignmen__Emplo__44FF419A");
+
+                entity.HasOne(d => d.TimeFrame)
+                    .WithMany(p => p.Assignment)
+                    .HasForeignKey(d => d.TimeFrameId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Assignmen__TimeF__4316F928");
             });
 
             modelBuilder.Entity<AssignmentType>(entity =>
@@ -87,47 +117,6 @@ namespace ComfortCare.Data
                     .HasConstraintName("FK__Citizen__Residen__3A81B327");
             });
 
-            modelBuilder.Entity<CitizenAssignment>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.AssignmentId).HasColumnName("AssignmentID");
-
-                entity.Property(e => e.CitizenId).HasColumnName("CitizenID");
-
-                entity.Property(e => e.EmployeeSkillId).HasColumnName("EmployeeSkillID");
-
-                entity.HasOne(d => d.Assignment)
-                    .WithMany(p => p.CitizenAssignment)
-                    .HasForeignKey(d => d.AssignmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CitizenAs__Assig__440B1D61");
-
-                entity.HasOne(d => d.Citizen)
-                    .WithMany(p => p.CitizenAssignment)
-                    .HasForeignKey(d => d.CitizenId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CitizenAs__Citiz__4316F928");
-
-                entity.HasOne(d => d.EmployeeSkill)
-                    .WithMany(p => p.CitizenAssignment)
-                    .HasForeignKey(d => d.EmployeeSkillId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CitizenAs__Emplo__46E78A0C");
-
-                entity.HasOne(d => d.EmployeeTypeMasterNavigation)
-                    .WithMany(p => p.CitizenAssignmentEmployeeTypeMasterNavigation)
-                    .HasForeignKey(d => d.EmployeeTypeMaster)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CitizenAs__Emplo__44FF419A");
-
-                entity.HasOne(d => d.EmployeeTypeSlaveNavigation)
-                    .WithMany(p => p.CitizenAssignmentEmployeeTypeSlaveNavigation)
-                    .HasForeignKey(d => d.EmployeeTypeSlave)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CitizenAs__Emplo__45F365D3");
-            });
-
             modelBuilder.Entity<DayType>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -150,13 +139,13 @@ namespace ComfortCare.Data
                     .WithMany(p => p.DistanceResidenceOne)
                     .HasForeignKey(d => d.ResidenceOneId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Distance__Reside__4AB81AF0");
+                    .HasConstraintName("FK__Distance__Reside__49C3F6B7");
 
                 entity.HasOne(d => d.ResidenceTwo)
                     .WithMany(p => p.DistanceResidenceTwo)
                     .HasForeignKey(d => d.ResidenceTwoId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Distance__Reside__4BAC3F29");
+                    .HasConstraintName("FK__Distance__Reside__4AB81AF0");
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -182,76 +171,73 @@ namespace ComfortCare.Data
 
                 entity.Property(e => e.SkillId).HasColumnName("SkillID");
 
-                entity.HasMany(d => d.EmployeeRoute)
+                entity.HasOne(d => d.EmployeeType)
                     .WithMany(p => p.Employee)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "EmployeeWorkSchedule",
-                        l => l.HasOne<EmployeeRoute>().WithMany().HasForeignKey("EmployeeRouteId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeW__Emplo__5629CD9C"),
-                        r => r.HasOne<Employee>().WithMany().HasForeignKey("EmployeeId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeW__Emplo__5535A963"),
-                        j =>
-                        {
-                            j.HasKey("EmployeeId", "EmployeeRouteId");
+                    .HasForeignKey(d => d.EmployeeTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Employee__Employ__36B12243");
+            });
 
-                            j.ToTable("EmployeeWorkSchedule");
+            modelBuilder.Entity<EmployeeEmployeeRoute>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-                            j.IndexerProperty<int>("EmployeeId").HasColumnName("EmployeeID");
+                entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
 
-                            j.IndexerProperty<int>("EmployeeRouteId").HasColumnName("EmployeeRouteID");
-                        });
+                entity.Property(e => e.EmployeeRouteId).HasColumnName("EmployeeRouteID");
 
-                entity.HasMany(d => d.Preference)
-                    .WithMany(p => p.Employee)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "EmployeePreference",
-                        l => l.HasOne<Preference>().WithMany().HasForeignKey("PreferenceId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeP__Prefe__59063A47"),
-                        r => r.HasOne<Employee>().WithMany().HasForeignKey("EmployeeId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__EmployeeP__Emplo__5812160E"),
-                        j =>
-                        {
-                            j.HasKey("EmployeeId", "PreferenceId");
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.EmployeeEmployeeRoute)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__EmployeeE__Emplo__52593CB8");
 
-                            j.ToTable("EmployeePreference");
+                entity.HasOne(d => d.EmployeeRoute)
+                    .WithMany(p => p.EmployeeEmployeeRoute)
+                    .HasForeignKey(d => d.EmployeeRouteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__EmployeeE__Emplo__534D60F1");
+            });
 
-                            j.IndexerProperty<int>("EmployeeId").HasColumnName("EmployeeID");
+            modelBuilder.Entity<EmployeePreference>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-                            j.IndexerProperty<int>("PreferenceId").HasColumnName("PreferenceID");
-                        });
+                entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
+
+                entity.Property(e => e.PreferenceId).HasColumnName("PreferenceID");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.EmployeePreference)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__EmployeeP__Emplo__5535A963");
+
+                entity.HasOne(d => d.Preference)
+                    .WithMany(p => p.EmployeePreference)
+                    .HasForeignKey(d => d.PreferenceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__EmployeeP__Prefe__5629CD9C");
             });
 
             modelBuilder.Entity<EmployeeRoute>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.CitizenAssignmentId).HasColumnName("CitizenAssignmentID");
+                entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
 
-                entity.HasOne(d => d.CitizenAssignment)
+                entity.Property(e => e.AssignmentId).HasColumnName("AssignmentID");
+
+                entity.HasOne(d => d.Assignment)
                     .WithMany(p => p.EmployeeRoute)
-                    .HasForeignKey(d => d.CitizenAssignmentId)
+                    .HasForeignKey(d => d.AssignmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__EmployeeR__Citiz__48CFD27E");
-
-                entity.HasMany(d => d.CitizenAssignmentNavigation)
-                    .WithMany(p => p.EmployeeRouteNavigation)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "RouteCitizenAssignment",
-                        l => l.HasOne<CitizenAssignment>().WithMany().HasForeignKey("CitizenAssignmentId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__RouteCiti__Citiz__534D60F1"),
-                        r => r.HasOne<EmployeeRoute>().WithMany().HasForeignKey("EmployeeRouteId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__RouteCiti__Emplo__52593CB8"),
-                        j =>
-                        {
-                            j.HasKey("EmployeeRouteId", "CitizenAssignmentId");
-
-                            j.ToTable("RouteCitizenAssignment");
-
-                            j.IndexerProperty<int>("EmployeeRouteId").HasColumnName("EmployeeRouteID");
-
-                            j.IndexerProperty<int>("CitizenAssignmentId").HasColumnName("CitizenAssignmentID");
-                        });
+                    .HasConstraintName("FK__EmployeeR__Assig__47DBAE45");
             });
 
             modelBuilder.Entity<EmployeeSkill>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
 
@@ -272,7 +258,7 @@ namespace ComfortCare.Data
 
             modelBuilder.Entity<EmployeeStatementPeriod>(entity =>
             {
-                entity.HasKey(e => new { e.EmployeeId, e.StatementPeriodId });
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
 
@@ -284,19 +270,19 @@ namespace ComfortCare.Data
                     .WithMany(p => p.EmployeeStatementPeriod)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__EmployeeS__Emplo__5BE2A6F2");
+                    .HasConstraintName("FK__EmployeeS__Emplo__5812160E");
 
                 entity.HasOne(d => d.StatementPeriod)
                     .WithMany(p => p.EmployeeStatementPeriod)
                     .HasForeignKey(d => d.StatementPeriodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__EmployeeS__State__5CD6CB2B");
+                    .HasConstraintName("FK__EmployeeS__State__59063A47");
 
                 entity.HasOne(d => d.TimeRegistration)
                     .WithMany(p => p.EmployeeStatementPeriod)
                     .HasForeignKey(d => d.TimeRegistrationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__EmployeeS__TimeR__5DCAEF64");
+                    .HasConstraintName("FK__EmployeeS__TimeR__59FA5E80");
             });
 
             modelBuilder.Entity<EmployeeType>(entity =>
@@ -321,13 +307,13 @@ namespace ComfortCare.Data
                     .WithMany(p => p.Preference)
                     .HasForeignKey(d => d.DayTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Preferenc__DayTy__5070F446");
+                    .HasConstraintName("FK__Preferenc__DayTy__4F7CD00D");
 
                 entity.HasOne(d => d.WorkingTimespan)
                     .WithMany(p => p.Preference)
                     .HasForeignKey(d => d.WorkingTimespanId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Preferenc__Worki__4F7CD00D");
+                    .HasConstraintName("FK__Preferenc__Worki__4E88ABD4");
             });
 
             modelBuilder.Entity<Residence>(entity =>
@@ -371,6 +357,15 @@ namespace ComfortCare.Data
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TimeFrame>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.TimeFrameEnd).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeFrameStart).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<TimeRegistration>(entity =>

@@ -5,18 +5,17 @@ using System.Collections.Generic;
 
 namespace ComfortCare.Domain.Entities
 {
-    public partial class Citizen
+    public partial class TimeFrame
     {
-        public Citizen()
+        public TimeFrame()
         {
             Assignment = new HashSet<Assignment>();
         }
 
         public int Id { get; set; }
-        public string CitizenName { get; set; }
-        public int ResidenceId { get; set; }
+        public DateTime TimeFrameStart { get; set; }
+        public DateTime TimeFrameEnd { get; set; }
 
-        public virtual Residence Residence { get; set; }
         public virtual ICollection<Assignment> Assignment { get; set; }
     }
 }

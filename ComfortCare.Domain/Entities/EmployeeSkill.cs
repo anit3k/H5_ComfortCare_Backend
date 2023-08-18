@@ -7,17 +7,11 @@ namespace ComfortCare.Domain.Entities
 {
     public partial class EmployeeSkill
     {
-        public EmployeeSkill()
-        {
-            CitizenAssignment = new HashSet<CitizenAssignment>();
-        }
-
         public int Id { get; set; }
         public int EmployeeId { get; set; }
         public int SkillId { get; set; }
 
         public virtual Employee Employee { get; set; }
         public virtual Skill Skill { get; set; }
-        public virtual ICollection<CitizenAssignment> CitizenAssignment { get; set; }
     }
 }

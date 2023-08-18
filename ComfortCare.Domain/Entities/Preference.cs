@@ -9,7 +9,7 @@ namespace ComfortCare.Domain.Entities
     {
         public Preference()
         {
-            Employee = new HashSet<Employee>();
+            EmployeePreference = new HashSet<EmployeePreference>();
         }
 
         public int Id { get; set; }
@@ -18,7 +18,6 @@ namespace ComfortCare.Domain.Entities
 
         public virtual DayType DayType { get; set; }
         public virtual WorkingTimespan WorkingTimespan { get; set; }
-
-        public virtual ICollection<Employee> Employee { get; set; }
+        public virtual ICollection<EmployeePreference> EmployeePreference { get; set; }
     }
 }

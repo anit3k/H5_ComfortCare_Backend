@@ -9,16 +9,22 @@ namespace ComfortCare.Domain.Entities
     {
         public Assignment()
         {
-            CitizenAssignment = new HashSet<CitizenAssignment>();
+            EmployeeRoute = new HashSet<EmployeeRoute>();
         }
 
         public int Id { get; set; }
-        public DateTime DayOfAssignment { get; set; }
-        public DateTime TimeFrameStart { get; set; }
-        public DateTime TimeFrameEnd { get; set; }
+        public int CitizenId { get; set; }
+        public int TimeFrameId { get; set; }
+        public int EmployeeTypeMasterId { get; set; }
+        public int EmployeeTypeSlaveId { get; set; }
         public int AssignmentTypeId { get; set; }
+        public int? EmployeeSkillId { get; set; }
 
         public virtual AssignmentType AssignmentType { get; set; }
-        public virtual ICollection<CitizenAssignment> CitizenAssignment { get; set; }
+        public virtual Citizen Citizen { get; set; }
+        public virtual EmployeeType EmployeeTypeMaster { get; set; }
+        public virtual EmployeeType EmployeeTypeSlave { get; set; }
+        public virtual TimeFrame TimeFrame { get; set; }
+        public virtual ICollection<EmployeeRoute> EmployeeRoute { get; set; }
     }
 }

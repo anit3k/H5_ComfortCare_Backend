@@ -5,15 +5,13 @@ using System.Collections.Generic;
 
 namespace ComfortCare.Domain.Entities
 {
-    public partial class EmployeeStatementPeriod
+    public partial class EmployeeEmployeeRoute
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
-        public int StatementPeriodId { get; set; }
-        public int TimeRegistrationId { get; set; }
+        public int EmployeeRouteId { get; set; }
 
         public virtual Employee Employee { get; set; }
-        public virtual StatementPeriod StatementPeriod { get; set; }
-        public virtual TimeRegistration TimeRegistration { get; set; }
+        public virtual EmployeeRoute EmployeeRoute { get; set; }
     }
 }
