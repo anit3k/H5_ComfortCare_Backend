@@ -3,7 +3,7 @@
     /// <summary>
     /// This class is the manger for creating the statements plan for all the citizens
     /// </summary>
-    public class PlanManager
+    public class PlanManager : IPlanManager
     {
         #region fields
         private readonly IRepo _repo;
@@ -28,7 +28,7 @@
         public void CalculateNewStatementPeriod(DateTime startDate, DateTime endDate)
         {
             // this is where the route calculater should start
-        }
+        }       
         #endregion
     }
 }

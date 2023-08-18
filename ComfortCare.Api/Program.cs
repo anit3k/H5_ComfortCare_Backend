@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 }
  );
 
+builder.Services.AddTransient<IPlanManager, PlanManager>();
 builder.Services.AddTransient<IRepo, RouteRepo>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<IGetSchema, GetSchema>();
