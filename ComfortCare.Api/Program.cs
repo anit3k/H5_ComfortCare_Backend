@@ -9,6 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<IDistance, RouteDistanceAPI>();
+var _allowAllOriginsForDevelopment = "_allowAllOriginsForDevelopment";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: _allowAllOriginsForDevelopment,
+        builder =>
+        {
+            builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+        });
+});
 builder.Services.AddTransient<IRepo, RouteRepo>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<IGetSchema, GetSchema>();
