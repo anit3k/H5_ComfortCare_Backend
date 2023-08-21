@@ -9,13 +9,13 @@ namespace ComfortCare.Domain.BusinessLogic
     public class PlanManager : IPlanManager
     {
         #region fields
-
+        private readonly RouteGenerator _routeGen;
         #endregion
 
         #region Constructor
-        public PlanManager()
+        public PlanManager(RouteGenerator routeGen)
         {
-         
+            _routeGen = routeGen;
         }
         #endregion
 
@@ -28,7 +28,7 @@ namespace ComfortCare.Domain.BusinessLogic
         /// <param name="endDate">The date of which the period ends</param>
         public void CalculateNewStatementPeriod(DateTime startDate, DateTime endDate)
         {
-            // this is where the route calculater should start
+            var result = _routeGen.CalculateDaylyRoutes(startDate, endDate);
         }       
         #endregion
     }

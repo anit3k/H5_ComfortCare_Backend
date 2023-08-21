@@ -6,8 +6,8 @@
     /// </summary>
     public class DistanceEntity
     {
-        public AssignmentEntity AssignmentOne { get; set; }
-        public AssignmentEntity AssignmentTwo { get; set; }
+        public int AssignmentOne { get; set; }
+        public int AssignmentTwo { get; set; }
         public double DistanceBetween { get; set; }
     }
 }

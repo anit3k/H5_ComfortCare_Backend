@@ -31,6 +31,9 @@ namespace ComfortCare.Api.Controllers
             {
                 return BadRequest("Invalid date range. The period should be between 1 day and 16 weeks.");
             }
+
+            _manager.CalculateNewStatementPeriod(periodDto.StartDate, periodDto.EndDate);
+
             return Ok(periodDto);
         }               
         #endregion
