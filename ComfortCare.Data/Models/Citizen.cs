@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ComfortCare.Domain.Entities
+namespace ComfortCare.Data.Models
 {
     public partial class Citizen
     {

@@ -1,5 +1,5 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Domain.BusinessLogic;
+using ComfortCare.Domain.BusinessLogic.interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers

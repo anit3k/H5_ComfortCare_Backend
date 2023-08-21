@@ -1,4 +1,4 @@
-﻿namespace ComfortCare.Domain.BusinessLogic
+﻿namespace ComfortCare.Domain.BusinessLogic.interfaces
 {
     public interface IPlanManager
     {

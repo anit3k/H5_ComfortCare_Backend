@@ -3,19 +3,19 @@
 using System;
 using System.Collections.Generic;
 
-namespace ComfortCare.Domain.Entities
+namespace ComfortCare.Data.Models
 {
     public partial class TimeFrame
     {
         public TimeFrame()
         {
-            Assignment = new HashSet<Assignment>();
+            AssignmentType = new HashSet<AssignmentType>();
         }
 
         public int Id { get; set; }
         public DateTime TimeFrameStart { get; set; }
         public DateTime TimeFrameEnd { get; set; }
 
-        public virtual ICollection<Assignment> Assignment { get; set; }
+        public virtual ICollection<AssignmentType> AssignmentType { get; set; }
     }
 }

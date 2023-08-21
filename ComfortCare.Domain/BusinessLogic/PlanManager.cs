@@ -1,4 +1,6 @@
-﻿namespace ComfortCare.Domain.BusinessLogic
+﻿using ComfortCare.Domain.BusinessLogic.interfaces;
+
+namespace ComfortCare.Domain.BusinessLogic
 {
     /// <summary>
     /// This class is the manger for creating the statements plan for all the citizens
@@ -6,12 +8,12 @@
     public class PlanManager : IPlanManager
     {
         #region fields
-        private readonly IRepo _repo;
-        private readonly IDistance _distance;
+        private readonly IRouteConstructionRepo _repo;
+        private readonly IDistanceRequest _distance;
         #endregion
 
         #region Constructor
-        public PlanManager(IRepo repo, IDistance distance)
+        public PlanManager(IRouteConstructionRepo repo, IDistanceRequest distance)
         {
             _repo = repo;
             _distance = distance;

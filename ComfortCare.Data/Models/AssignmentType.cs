@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ComfortCare.Domain.Entities
+namespace ComfortCare.Data.Models
 {
     public partial class AssignmentType
     {
@@ -16,7 +16,9 @@ namespace ComfortCare.Domain.Entities
         public string Title { get; set; }
         public string AssignmentTypeDescription { get; set; }
         public int DurationInSeconds { get; set; }
+        public int TimeFrameId { get; set; }
 
+        public virtual TimeFrame TimeFrame { get; set; }
         public virtual ICollection<Assignment> Assignment { get; set; }
     }
 }
