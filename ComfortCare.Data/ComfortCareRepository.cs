@@ -1,5 +1,6 @@
 ﻿using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComfortCare.Data
 {
@@ -17,20 +18,68 @@ namespace ComfortCare.Data
         public ComfortCareRepository(ComfortCareDbContext context)
         {
             _context = context;
-        }      
+        }
         #endregion
 
         #region Methods
-        // TODO: refactor these method to fit what ever the route calculator algorithm needs.
+        /// <summary>
+        /// Returns all assignments, within a given time period.
+        /// </summary>
+        /// <param name="start">StartTimeFrame for the assignment to be executed within</param>
+        /// <param name="end">EndTime for the assignment to be executed within</param>
+        /// <returns>Returns a list of assignments that needs to be RouteCalculated</returns>
         public List<AssignmentEntity> GetAssignmentsInPeriod(DateTime start, DateTime end)
-        {            
-            throw new NotImplementedException();
+        {
+            var result = _context.Assignment.Include(a => a.AssignmentType).ThenInclude(at => at.TimeFrame).ToList();
+
+            List<AssignmentEntity> assignmentEntities = new List<AssignmentEntity>();
+
+
+            for (int i = 0; i < 500; i++)
+            {
+                var temp = new AssignmentEntity()
+                {
+                    Duration = result[i].AssignmentType.DurationInSeconds,
+                    Id = result[i].Id,
+                    TimeWindowStart = result[i].AssignmentType.TimeFrame.TimeFrameStart,
+                    TimeWindowEnd = result[i].AssignmentType.TimeFrame.TimeFrameEnd,
+                    ArrivalTime = DateTime.MinValue
+                };
+
+                assignmentEntities.Add(temp);
+            }
+
+            return assignmentEntities;
         }
 
+        /// <summary>
+        /// Returns a list of distances between citizens that is connected to each other on the assignmentList.
+        /// </summary>
+        /// <param name="assignmentsForPeriod">A list of assignments within the valid period.</param>
+        /// <returns>Returns a list of distances to calculate the shortest routes.</returns>
         public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
-            throw new NotImplementedException();
+            List<int> assignmentIds = assignmentsForPeriod.Select(a => a.Id).ToList();
+            var distancesQuery = _context.Distance.Where(d => assignmentIds.Contains(d.ResidenceOneId) && assignmentIds.Contains(d.ResidenceTwoId)).ToList();
+
+            List<DistanceEntity> result = new List<DistanceEntity>();
+
+            foreach (var distance in distancesQuery)
+            {
+                var temp = new DistanceEntity()
+                {
+                    AssignmentOne = distance.ResidenceOneId,
+                    AssignmentTwo = distance.ResidenceTwoId,
+                    DistanceBetween = distance.Duration
+                };
+
+                result.Add(temp);
+            }
+
+            return result;
         }
+
+        // TODO: refactor these method to fit what ever the route calculator algorithm needs.
         public List<IEmployeesRepo> GetAllEmployees()
         {
             throw new NotImplementedException();

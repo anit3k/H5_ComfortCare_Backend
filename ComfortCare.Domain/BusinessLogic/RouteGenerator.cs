@@ -12,21 +12,23 @@ namespace ComfortCare.Domain.BusinessLogic
     {
         #region fields
         private readonly IRouteConstructionRepo _routeRepo;
-        private readonly IDistanceRequest _distanceApi;
         #endregion
 
         #region Constructor
-        public RouteGenerator(IRouteConstructionRepo routeRepo, IDistanceRequest distanceApi)
+        public RouteGenerator(IRouteConstructionRepo routeRepo)
         {
             _routeRepo = routeRepo;
-            _distanceApi = distanceApi;
         }
         #endregion
 
         #region Methods
-        public List<RouteEntity> CalculateDaylyRoutes(List<AssignmentEntity> allAssignments, List<DistanceEntity> distances, DateTime routeStartTime, DateTime routeEndTime)
+        public List<RouteEntity> CalculateDaylyRoutes(DateTime routeStartTime, DateTime routeEndTime)
         {
-            List<AssignmentEntity> availableAssignments = allAssignments;
+            List<AssignmentEntity> availableAssignments = _routeRepo.GetAssignmentsInPeriod(routeStartTime, routeEndTime);
+            var distances = _routeRepo.GetDistanceses(availableAssignments);
+
+
+
             List<RouteEntity> plannedRoutes = new List<RouteEntity>();
 
             while (availableAssignments.Any())
@@ -50,20 +52,21 @@ namespace ComfortCare.Domain.BusinessLogic
                     foreach (var potentialNextAssignment in availableAssignments.Where(a => a != currentAssignment && a.TimeWindowEnd >= routeTimeTracker && route.Contains(a) == false))
                     {
                         var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
-                            (d.AssignmentOne == currentAssignment && d.AssignmentTwo == potentialNextAssignment) ||
-                            (d.AssignmentTwo == currentAssignment && d.AssignmentOne == potentialNextAssignment));
+                            (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
+                            (d.AssignmentTwo == currentAssignment.Id && d.AssignmentOne == potentialNextAssignment.Id));
 
-                        if (distanceToFromCurrentToPotentialNextTuple == null)
+                        // TODO: We need to find the error resulting in null exception, in the "distanceToFromCurrentToPotentialNextTuple".
+                        if (distanceToFromCurrentToPotentialNextTuple != null)
                         {
-                            // TODO: implement distance api here, or should it live in the data layer?!?!?!?!?!?
-                            
-                        }
-
-                        var travelTimeFromCurrentToPotentialNext = distanceToFromCurrentToPotentialNextTuple.DistanceBetween;
-                        if (travelTimeFromCurrentToPotentialNext < shortestDistanceToPotentialNext)
-                        {
-                            shortestDistanceToPotentialNext = travelTimeFromCurrentToPotentialNext;
-                            nextAssignment = potentialNextAssignment;
+                            var travelTimeFromCurrentToPotentialNext = distanceToFromCurrentToPotentialNextTuple.DistanceBetween;
+                            if (travelTimeFromCurrentToPotentialNext != 0)
+                            {
+                                if (travelTimeFromCurrentToPotentialNext < shortestDistanceToPotentialNext)
+                                {
+                                    shortestDistanceToPotentialNext = travelTimeFromCurrentToPotentialNext;
+                                    nextAssignment = potentialNextAssignment;
+                                }  
+                            }
                         }
 
                     }
@@ -93,6 +96,18 @@ namespace ComfortCare.Domain.BusinessLogic
                 }
 
             }
+
+
+            // TODO: Remove when finished debug test.
+            int intCounter = 0;
+
+            foreach (var plannedRoute in plannedRoutes) { 
+                foreach (var assignment in plannedRoute.Assignments)
+                {
+                    intCounter++;
+                }
+            }
+
 
             return plannedRoutes;
         }
