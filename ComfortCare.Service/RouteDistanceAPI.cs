@@ -1,4 +1,4 @@
-﻿using ComfortCare.Domain.BusinessLogic;
+﻿using ComfortCare.Domain.BusinessLogic.interfaces;
 using System.Text;
 using System.Text.Json;
 
@@ -7,7 +7,7 @@ namespace ComfortCare.Service
     /// <summary>
     /// The class is used to get the distance from one point to another.
     /// </summary>
-    public class RouteDistanceAPI : IDistance
+    public class RouteDistanceAPI : IDistanceRequest
     {
         #region fields
         private readonly HttpClient _httpClient;

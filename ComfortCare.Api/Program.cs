@@ -1,5 +1,6 @@
 using ComfortCare.Data;
 using ComfortCare.Domain.BusinessLogic;
+using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient<IDistance, RouteDistanceAPI>();
+builder.Services.AddHttpClient<IDistanceRequest, RouteDistanceAPI>();
 
 builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 {
@@ -20,7 +21,7 @@ builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
  );
 
 builder.Services.AddTransient<IPlanManager, PlanManager>();
-builder.Services.AddTransient<IRepo, RouteRepo>();
+builder.Services.AddTransient<IRouteConstructionRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<IGetSchema, GetSchema>();
 
