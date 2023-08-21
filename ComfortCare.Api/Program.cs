@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 
 builder.Services.AddTransient<IPlanManager, PlanManager>();
 builder.Services.AddTransient<IRouteConstructionRepo, ComfortCareRepository>();
+builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<IGetSchema, GetSchema>();
 
