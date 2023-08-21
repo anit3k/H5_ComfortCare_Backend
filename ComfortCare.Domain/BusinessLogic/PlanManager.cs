@@ -3,20 +3,19 @@
 namespace ComfortCare.Domain.BusinessLogic
 {
     /// <summary>
-    /// This class is the manger for creating the statements plan for all the citizens
+    /// This class is the manger for creating the statements plan for all the citizens, and schema's for all the employees
+    /// uisng the ComfortCare Eco System
     /// </summary>
     public class PlanManager : IPlanManager
     {
         #region fields
-        private readonly IRouteConstructionRepo _repo;
-        private readonly IDistanceRequest _distance;
+
         #endregion
 
         #region Constructor
-        public PlanManager(IRouteConstructionRepo repo, IDistanceRequest distance)
+        public PlanManager()
         {
-            _repo = repo;
-            _distance = distance;
+         
         }
         #endregion
 

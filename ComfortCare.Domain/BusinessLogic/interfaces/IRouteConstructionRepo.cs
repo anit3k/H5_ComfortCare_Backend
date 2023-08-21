@@ -7,8 +7,8 @@ namespace ComfortCare.Domain.BusinessLogic.interfaces
     /// </summary>
     public interface IRouteConstructionRepo
     {
-        public List<Assignment> GetAssignmentsInPeriod(DateTime start, DateTime end);
-        public List<Distance> GetDistanceses(List<Assignment> assignmentsForPeriod);
+        public List<AssignmentEntity> GetAssignmentsInPeriod(DateTime start, DateTime end);
+        public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod);
 
     }
 }

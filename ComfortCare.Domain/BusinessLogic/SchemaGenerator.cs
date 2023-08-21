@@ -7,5 +7,6 @@
     /// </summary>
     public class SchemaGenerator
     {
+        
     }
 }

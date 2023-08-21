@@ -3,7 +3,7 @@
     /// <summary>
     /// This class is used as an entity to hold the assignmets that is not yet been assigned to an employee
     /// </summary>
-    public class Assignment
+    public class AssignmentEntity
     {
         public int Id { get; set; }
         public DateTime TimeWindowStart{ get; set; }
