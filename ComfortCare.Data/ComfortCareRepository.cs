@@ -22,12 +22,12 @@ namespace ComfortCare.Data
 
         #region Methods
         // TODO: refactor these method to fit what ever the route calculator algorithm needs.
-        public List<Assignment> GetAssignmentsInPeriod(DateTime start, DateTime end)
-        {
+        public List<AssignmentEntity> GetAssignmentsInPeriod(DateTime start, DateTime end)
+        {            
             throw new NotImplementedException();
         }
 
-        public List<Distance> GetDistanceses(List<Assignment> assignmentsForPeriod)
+        public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
             throw new NotImplementedException();
         }

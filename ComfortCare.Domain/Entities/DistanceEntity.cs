@@ -4,10 +4,10 @@
     /// This class is used as an entity that hold the distance from one assignment to another,
     /// used in the route generator
     /// </summary>
-    public class Distance
+    public class DistanceEntity
     {
-        public int AssignmentIdOne { get; set; }
-        public int AssignmentIdTwo { get; set; }
+        public AssignmentEntity AssignmentOne { get; set; }
+        public AssignmentEntity AssignmentTwo { get; set; }
         public double DistanceBetween { get; set; }
     }
 }
