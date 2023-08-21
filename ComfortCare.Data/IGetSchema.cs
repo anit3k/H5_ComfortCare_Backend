@@ -1,4 +1,4 @@
-﻿using ComfortCare.Domain.Entities;
+﻿using ComfortCare.Data.Models;
 
 namespace ComfortCare.Data
 {

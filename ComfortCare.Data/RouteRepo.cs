@@ -1,6 +1,4 @@
 ﻿using ComfortCare.Domain.BusinessLogic;
-using ComfortCare.Domain.Entities;
-using System.Data.Common;
 
 namespace ComfortCare.Data
 {

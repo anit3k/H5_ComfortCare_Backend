@@ -3,18 +3,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace ComfortCare.Domain.Entities
+namespace ComfortCare.Data.Models
 {
-    public partial class TimeRegistration
+    public partial class StatementPeriod
     {
-        public TimeRegistration()
+        public StatementPeriod()
         {
             EmployeeStatementPeriod = new HashSet<EmployeeStatementPeriod>();
         }
 
         public int Id { get; set; }
-        public DateTime DateStartTime { get; set; }
-        public double WorkingHours { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public virtual ICollection<EmployeeStatementPeriod> EmployeeStatementPeriod { get; set; }
     }

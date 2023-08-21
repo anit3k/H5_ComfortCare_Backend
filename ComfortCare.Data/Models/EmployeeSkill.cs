@@ -3,15 +3,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace ComfortCare.Domain.Entities
+namespace ComfortCare.Data.Models
 {
-    public partial class EmployeeEmployeeRoute
+    public partial class EmployeeSkill
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
-        public int EmployeeRouteId { get; set; }
+        public int SkillId { get; set; }
 
         public virtual Employee Employee { get; set; }
-        public virtual EmployeeRoute EmployeeRoute { get; set; }
+        public virtual Skill Skill { get; set; }
     }
 }
