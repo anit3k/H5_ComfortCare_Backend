@@ -1,4 +1,6 @@
-﻿namespace ComfortCare.Domain.BusinessLogic
+﻿namespace ComfortCare.Domain.BusinessLogic;
+    using ComfortCare.Domain.BusinessLogic.interfaces;
+    using ComfortCare.Domain.Entities;
 {
     /// <summary>
     /// This class is used to populate routes with employees, it should use the rules for workinghours
@@ -7,6 +9,30 @@
     /// </summary>
     public class SchemaGenerator
     {
-        
+
+
+        #region Fields
+        private readonly IEmployeesRepo _employeesRepo;
+        #endregion
+
+
+
+
+        #region Constructor 
+    public SchemaGenerator(IEmployeesRepo employeesRepo)
+    {
+              _employeesRepo = employeesRepo;
+    }
+        #endregion
+
+
+
+
+        #region Methods
+        public void GenerateSchema()
+        {
+
+        }
+        #endregion
     }
 }
