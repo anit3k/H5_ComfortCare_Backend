@@ -23,19 +23,16 @@ namespace ComfortCare.Data
 
         #region Methods
         /// <summary>
-        /// Returns all assignments, within a given time period.
+        /// The method gets the number of assignments to be route calculated
         /// </summary>
-        /// <param name="start">StartTimeFrame for the assignment to be executed within</param>
-        /// <param name="end">EndTime for the assignment to be executed within</param>
-        /// <returns>Returns a list of assignments that needs to be RouteCalculated</returns>
-        public List<AssignmentEntity> GetAssignmentsInPeriod(DateTime start, DateTime end)
+        /// <param name="assignments">number of assignments from db</param>
+        /// <returns>List of assignmentEntities</returns>
+        public List<AssignmentEntity> GetNumberOfAssignments(int assignments)
         {
             var result = _context.Assignment.Include(a => a.AssignmentType).ThenInclude(at => at.TimeFrame).ToList();
-
             List<AssignmentEntity> assignmentEntities = new List<AssignmentEntity>();
 
-
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < assignments; i++)
             {
                 var temp = new AssignmentEntity()
                 {
@@ -45,7 +42,6 @@ namespace ComfortCare.Data
                     TimeWindowEnd = result[i].AssignmentType.TimeFrame.TimeFrameEnd,
                     ArrivalTime = DateTime.MinValue
                 };
-
                 assignmentEntities.Add(temp);
             }
 

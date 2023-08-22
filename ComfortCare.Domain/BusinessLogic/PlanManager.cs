@@ -1,4 +1,5 @@
 ﻿using ComfortCare.Domain.BusinessLogic.interfaces;
+using ComfortCare.Domain.Entities;
 
 namespace ComfortCare.Domain.BusinessLogic
 {
@@ -20,15 +21,10 @@ namespace ComfortCare.Domain.BusinessLogic
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Main method for calculation of the statement period.
-        /// Saves the generated schedule to the data source
-        /// </summary>
-        /// <param name="startDate">The date of which the period begins</param>
-        /// <param name="endDate">The date of which the period ends</param>
-        public void CalculateNewStatementPeriod(DateTime startDate, DateTime endDate)
+        public List<RouteEntity> CalculateNewStatementPeriod(int numberOfDays, int numberOfAssignments)
         {
-            var result = _routeGen.CalculateDaylyRoutes(startDate, endDate);
+            var result = _routeGen.CalculateDaylyRoutes(numberOfDays, numberOfAssignments);
+            return result;
         }       
         #endregion
     }
