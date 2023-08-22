@@ -44,7 +44,6 @@ namespace ComfortCare.Data
                 };
                 assignmentEntities.Add(temp);
             }
-
             return assignmentEntities;
         }
 
@@ -57,9 +56,7 @@ namespace ComfortCare.Data
         {
             List<int> assignmentIds = assignmentsForPeriod.Select(a => a.Id).ToList();
             var distancesQuery = _context.Distance.Where(d => assignmentIds.Contains(d.ResidenceOneId) && assignmentIds.Contains(d.ResidenceTwoId)).ToList();
-
             List<DistanceEntity> result = new List<DistanceEntity>();
-
             foreach (var distance in distancesQuery)
             {
                 var temp = new DistanceEntity()
@@ -71,7 +68,6 @@ namespace ComfortCare.Data
 
                 result.Add(temp);
             }
-
             return result;
         }
 
