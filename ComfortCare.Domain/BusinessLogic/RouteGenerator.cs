@@ -72,20 +72,21 @@ namespace ComfortCare.Domain.BusinessLogic
  
                         var temp4 = availableAssignments.Where(a =>
                                                             a != currentAssignment &&
-                                                            a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
-                                                            a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
-                                                            (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
-                                                            && !route.Contains(a)
-                                                            )
+                                                            a.TimeWindowStart < routeTimeTracker && a.TimeWindowEnd > routeTimeTracker // Assignment spans the entire current date
+                                                            && !route.Contains(a))
                                                             .ToList();
 
-                        foreach (var potentialNextAssignment in availableAssignments.Where(a =>
-                                                            a != currentAssignment &&
-                                                            a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
-                                                            a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
-                                                            (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
-                                                            && !route.Contains(a)
-                                                            ))
+                      
+
+
+                        //foreach (var potentialNextAssignment in availableAssignments.Where(a =>
+                        //                                    a != currentAssignment &&
+                        //                                    a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
+                        //                                    a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
+                        //                                    (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
+                        //                                    && !route.Contains(a)
+                        //                                    ))
+                        foreach(var potentialNextAssignment in temp4)
                         {
                             var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
                                 (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
