@@ -5,7 +5,6 @@
     /// </summary>
     public class RouteEntity
     {
-        // TODO: Do we need an Id here!??!!?!?
         public Guid RouteGuid { get; set; }
         public List<AssignmentEntity> Assignments { get; set; }
     }

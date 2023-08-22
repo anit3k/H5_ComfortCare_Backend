@@ -38,17 +38,14 @@ namespace ComfortCare.Domain.BusinessLogic
                     {
                         item.TimeWindowEnd = currentDay.AddMilliseconds(item.TimeWindowEnd.TimeOfDay.TotalMilliseconds);
                         item.TimeWindowEnd = item.TimeWindowEnd.AddDays(1);
-
                     }
                     else
                     {
                         item.TimeWindowEnd = currentDay.AddMilliseconds(item.TimeWindowEnd.TimeOfDay.TotalMilliseconds);
-
                     }
                 }
 
                 var distances = _routeRepo.GetDistanceses(availableAssignments);
-
 
                 while (availableAssignments.Any())
                 {
@@ -68,31 +65,19 @@ namespace ComfortCare.Domain.BusinessLogic
                     {
                         AssignmentEntity nextAssignment = null;
                         double shortestDistanceToPotentialNext = Double.MaxValue;
-
  
-                        var temp4 = availableAssignments.Where(a =>
+                        var availableAssigmentsAtThecurrentTime = availableAssignments.Where(a =>
                                                             a != currentAssignment &&
-                                                            a.TimeWindowStart < routeTimeTracker && a.TimeWindowEnd > routeTimeTracker // Assignment spans the entire current date
+                                                            a.TimeWindowStart < routeTimeTracker && a.TimeWindowEnd > routeTimeTracker 
                                                             && !route.Contains(a))
                                                             .ToList();
 
-                      
-
-
-                        //foreach (var potentialNextAssignment in availableAssignments.Where(a =>
-                        //                                    a != currentAssignment &&
-                        //                                    a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
-                        //                                    a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
-                        //                                    (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
-                        //                                    && !route.Contains(a)
-                        //                                    ))
-                        foreach(var potentialNextAssignment in temp4)
+                        foreach(var potentialNextAssignment in availableAssigmentsAtThecurrentTime)
                         {
                             var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
                                 (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
                                 (d.AssignmentTwo == currentAssignment.Id && d.AssignmentOne == potentialNextAssignment.Id));
 
-                            // TODO: We need to find the error resulting in null exception, in the "distanceToFromCurrentToPotentialNextTuple".
                             if (distanceToFromCurrentToPotentialNextTuple != null)
                             {
                                 var travelTimeFromCurrentToPotentialNext = distanceToFromCurrentToPotentialNextTuple.DistanceBetween;
@@ -134,25 +119,11 @@ namespace ComfortCare.Domain.BusinessLogic
 
                 }
 
-
-                // TODO: Remove when finished debug test.
-                int intCounter = 0;
-
-                foreach (var plannedRoute in plannedRoutes)
-                {
-                    foreach (var assignment in plannedRoute.Assignments)
-                    {
-                        intCounter++;
-                    }
-                }
-
                 currentDay = currentDay.AddDays(i);
             }
-
 
             return plannedRoutes;
         }
         #endregion
-
     }
 }
