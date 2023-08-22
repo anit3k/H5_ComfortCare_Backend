@@ -51,7 +51,7 @@ namespace ComfortCare.Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(503, "Service unavailable. No internet available.");
+                return StatusCode(500, "Service unavailable. No internet available.");
             }
         }
         #endregion
