@@ -1,5 +1,5 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Domain.BusinessLogic.interfaces;
+using ComfortCare.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -13,13 +13,13 @@ namespace ComfortCare.Api.Controllers
     public class PeriodController : ControllerBase
     {
         #region fields
-        private readonly IPlanManager _manager;
+        private readonly IGetStatementPeriod _comfortCareSmartPlanner;
         #endregion
 
         #region Constructor
-        public PeriodController(IPlanManager manager)
+        public PeriodController(IGetStatementPeriod smartPlanner)
         {
-            _manager = manager;
+            _comfortCareSmartPlanner = smartPlanner;
         }
         #endregion
 
@@ -27,14 +27,8 @@ namespace ComfortCare.Api.Controllers
         [HttpPost("CalculatePeriod")]
         public IActionResult CalculatePeriod(PeriodDto periodDto) 
         {
-            if (!periodDto.IsValid())
-            {
-                return BadRequest("Invalid date range. The period should be between 1 day and 16 weeks.");
-            }
-
-            _manager.CalculateNewStatementPeriod(periodDto.StartDate, periodDto.EndDate);
-
-            return Ok(periodDto);
+            var result = _comfortCareSmartPlanner.CreateStatementPeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
+            return Ok(result);
         }               
         #endregion
 

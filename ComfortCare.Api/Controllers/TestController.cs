@@ -57,11 +57,11 @@ namespace ComfortCare.Api.Controllers
                 "Anders Jensen", "Camilla Olsen", "Thomas Petersen", "Sofie Poulsen", "Michael Hansen"
             };
             var addresses = new[] {
-                "Ahornvej 5, 4100 Ringsted", "Bøgevej 12, 4100 Ringsted", "Egevej 8, 4100 Ringsted",
-                "Fyrvej 15, 4100 Ringsted", "Granvej 3, 4100 Ringsted", "Solsikkevej 7, 4100 Ringsted",
-                "Kastanjevej 14, 4100 Ringsted", "Engvej 22, 4100 Ringsted", "Skovgade 9, 4100 Ringsted",
-                "Rosenvej 2, 4100 Ringsted", "Nygade 11, 4100 Ringsted", "Møllegade 6, 4100 Ringsted",
-                "Birkevej 18, 4100 Ringsted", "Bakkevej 31, 4100 Ringsted", "Søndre Ringgade 55, 4100 Ringsted"
+                "Ahornvej 5, Kværkeby ,4100 Ringsted", "Bøgevej 12,, 4100 Ringsted", "Egevej 8, Kværkeby, 4100 Ringsted",
+                "Fyrvej 15,,4100 Ringsted", "Granvej 3, Kværkeby, 4100 Ringsted", "Solsikkevej 7,, 4100 Ringsted",
+                "Kastanjevej 14, Kværkeby, 4100 Ringsted", "Engvej 22,, 4100 Ringsted", "Skovgade 9, Kværkeby, 4100 Ringsted",
+                "Rosenvej 2,, 4100 Ringsted", "Nygade 11, Kværkeby, 4100 Ringsted", "Møllegade 6, Kværkeby, 4100 Ringsted",
+                "Birkevej 18, Kværkeby, 4100 Ringsted", "Bakkevej 31,, 4100 Ringsted", "Søndre Ringgade 55,, 4100 Ringsted"
             };
             var assignmentTitles = new[] {
                 "Personlig pleje til ældre borger",
