@@ -80,10 +80,18 @@ namespace ComfortCare.Data
         }
 
         // TODO: refactor these method to fit what ever the route calculator algorithm needs.
+
+
+
+        //Create a method to get all employees from atabase
         public List<IEmployeesRepo> GetAllEmployees()
         {
+            var result = _context.Employee.Include(ep=>ep.EmployeePreference).ThenInclude(p=>p.Preference).ThenInclude(wt=>wt.WorkingTimespan).ThenInclude().ToList();
+            foreach (var employee in result)
+            {
 
-            throw new NotImplementedException();
+            }
+            return result;
         }
         #endregion
     }
