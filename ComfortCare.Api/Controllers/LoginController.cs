@@ -26,21 +26,32 @@ namespace ComfortCare.Api.Controllers
         #endregion
 
         #region Controller Methods
+        /// <summary>
+        /// Checks the request send by the app, with username and password, and validates the inputs.
+        /// Also handles errors for no internet.
+        /// </summary>
+        /// <param name="loginDto">Login data transfer object. Carries the user inputs.</param>
+        /// <returns>Returns a status code, and an error message in the body that the app can read on.</returns>
         [HttpPost("Employee")]
         public IActionResult EmployeeLogin(LoginDto loginDto)
         {
-            // TODO: make validation on user
             // TODO: get and return schedule for user
             var loginResult = _validator.ValidateUser(loginDto.Initials, loginDto.Password);
 
-
-            if (loginResult == true)
+            try
             {
-                return Ok(new EmployeeScheduleDto() { });
+                if (loginResult)
+                {
+                    return StatusCode(200, new EmployeeScheduleDto() { });
+                }
+                else
+                {
+                    return StatusCode(400, "Bad request, wrong username or password.");
+                } 
             }
-            else
+            catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(503, "Service unavailable. No internet available.");
             }
         }
         #endregion
