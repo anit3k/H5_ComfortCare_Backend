@@ -25,20 +25,38 @@ namespace ComfortCare.Domain.BusinessLogic
         public List<RouteEntity> CalculateDaylyRoutes(int numberOfDays, int numberOfAssigments)
         {
             List<RouteEntity> plannedRoutes = new List<RouteEntity>();
-            var firstDay = DateTime.Now;
+            var currentDay = DateTime.Now.Date;
 
             for (int i = 0; i < numberOfDays; i++)
             {
-                List<AssignmentEntity> availableAssignments = _routeRepo.GetNumberOfAssignments(numberOfDays);
+                List<AssignmentEntity> availableAssignments = _routeRepo.GetNumberOfAssignments(numberOfAssigments);
+
+                foreach (var item in availableAssignments)
+                {
+                    item.TimeWindowStart = currentDay.AddMilliseconds(item.TimeWindowStart.TimeOfDay.TotalMilliseconds);
+                    if (item.TimeWindowStart == currentDay.AddHours(23))
+                    {
+                        item.TimeWindowEnd = currentDay.AddMilliseconds(item.TimeWindowEnd.TimeOfDay.TotalMilliseconds);
+                        item.TimeWindowEnd = item.TimeWindowEnd.AddDays(1);
+
+                    }
+                    else
+                    {
+                        item.TimeWindowEnd = currentDay.AddMilliseconds(item.TimeWindowEnd.TimeOfDay.TotalMilliseconds);
+
+                    }
+                }
+
                 var distances = _routeRepo.GetDistanceses(availableAssignments);
 
 
                 while (availableAssignments.Any())
                 {
-                    DateTime routeTimeTracker = firstDay;
-                    AssignmentEntity startAssignment = availableAssignments.First();
+                    DateTime routeTimeTracker = currentDay;
+                    AssignmentEntity startAssignment = availableAssignments.OrderBy(o => o.TimeWindowStart).First();
 
                     startAssignment.ArrivalTime = startAssignment.TimeWindowStart;
+                    routeTimeTracker = startAssignment.ArrivalTime;
                     routeTimeTracker = routeTimeTracker.AddSeconds(startAssignment.Duration);
 
                     AssignmentEntity currentAssignment = startAssignment;
@@ -51,7 +69,23 @@ namespace ComfortCare.Domain.BusinessLogic
                         AssignmentEntity nextAssignment = null;
                         double shortestDistanceToPotentialNext = Double.MaxValue;
 
-                        foreach (var potentialNextAssignment in availableAssignments.Where(a => a != currentAssignment && a.TimeWindowEnd >= routeTimeTracker && route.Contains(a) == false))
+ 
+                        var temp4 = availableAssignments.Where(a =>
+                                                            a != currentAssignment &&
+                                                            a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
+                                                            a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
+                                                            (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
+                                                            && !route.Contains(a)
+                                                            )
+                                                            .ToList();
+
+                        foreach (var potentialNextAssignment in availableAssignments.Where(a =>
+                                                            a != currentAssignment &&
+                                                            a.TimeWindowStart.Date == routeTimeTracker || // Start time is within current date
+                                                            a.TimeWindowEnd.Date == routeTimeTracker ||   // End time is within current date
+                                                            (a.TimeWindowStart.Date < routeTimeTracker && a.TimeWindowEnd.Date > routeTimeTracker) // Assignment spans the entire current date
+                                                            && !route.Contains(a)
+                                                            ))
                         {
                             var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
                                 (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
@@ -111,7 +145,7 @@ namespace ComfortCare.Domain.BusinessLogic
                     }
                 }
 
-                firstDay = firstDay.AddDays(i);
+                currentDay = currentDay.AddDays(i);
             }
 
 
