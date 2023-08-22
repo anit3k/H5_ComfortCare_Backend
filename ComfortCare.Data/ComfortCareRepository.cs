@@ -1,4 +1,5 @@
-﻿using ComfortCare.Domain.BusinessLogic.interfaces;
+﻿using ComfortCare.Data.Models;
+using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,16 +80,35 @@ namespace ComfortCare.Data
 
 
 
-        //Create a method to get all employees from atabase
-        public List<IEmployeesRepo> GetAllEmployees()
+        public List<EmployeeEntity> GetAllEmployees()
         {
-            var result = _context.Employee.Include(ep=>ep.EmployeePreference).ThenInclude(p=>p.Preference).ThenInclude(wt=>wt.WorkingTimespan).ThenInclude().ToList();
-            foreach (var employee in result)
-            {
+            var employeeQuery = _context.Employee
+                .Include(ep => ep.EmployeePreference)
+                    .ThenInclude(p => p.Preference)
+                    .ThenInclude(wt => wt.WorkingTimespan)
+                .Include(ep => ep.EmployeePreference)
+                    .ThenInclude(p => p.Preference)
+                    .ThenInclude(dt => dt.DayType)
+                .Include(et => et.EmployeeType)
+                .Include(es => es.EmployeeStatementPeriod)
+                    .ThenInclude(sp => sp.StatementPeriod)
+                .Include(es => es.EmployeeStatementPeriod)
+                    .ThenInclude(tr => tr.TimeRegistration);
 
+            List<EmployeeEntity> employees = new();
+            foreach (var employee in employeeQuery)
+            {
+                var temp = new EmployeeEntity()
+                {
+                    ID = employee.Id,
+                    Weeklyworkhours = employee.WeeklyWorkingHours,
+                    EmployeeType = employee.EmployeeTypeId,
+                };
+                employees.Add(temp);
             }
-            return result;
+            return employees;
         }
+
         #endregion
     }
 }

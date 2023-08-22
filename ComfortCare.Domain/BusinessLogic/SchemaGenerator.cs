@@ -29,11 +29,12 @@ namespace ComfortCare.Domain.BusinessLogic
 
 
 
-
+        //TODO: Kent, please rewrite this section when done
         #region Methods
-        public void GenerateSchema()
+        public void GenerateSchema(List<RouteEntity> rutes)
         {
-
+            var employees = _employeesRepo.GetAllEmployees();
+            var test = 0;
         }
         #endregion
     }
