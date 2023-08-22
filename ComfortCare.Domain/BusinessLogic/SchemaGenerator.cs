@@ -7,7 +7,6 @@ namespace ComfortCare.Domain.BusinessLogic
     /// <summary>
     /// This class is used to populate routes with employees, it should use the rules for workinghours
     /// and look at the induvidual employee to calculate their specific working time etc...
-    /// TODO: Kent, please rewrite this section when done
     /// </summary>
     public class SchemaGenerator
     {
@@ -33,6 +32,9 @@ namespace ComfortCare.Domain.BusinessLogic
         #region Methods
         public void GenerateSchema(List<RouteEntity> rutes)
         {
+            //TODO: Kent - add logic to check for employees who have not worked within other timespans for 48 hours within this period
+
+
             var employees = _employeesRepo.GetAllEmployees();
             var test = 0;
         }
