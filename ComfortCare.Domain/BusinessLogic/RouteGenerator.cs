@@ -22,90 +22,96 @@ namespace ComfortCare.Domain.BusinessLogic
         #endregion
 
         #region Methods
-        public List<RouteEntity> CalculateDaylyRoutes(DateTime routeStartTime, DateTime routeEndTime)
+        public List<RouteEntity> CalculateDaylyRoutes(int numberOfDays, int numberOfAssigments)
         {
-            List<AssignmentEntity> availableAssignments = _routeRepo.GetAssignmentsInPeriod(routeStartTime, routeEndTime);
-            var distances = _routeRepo.GetDistanceses(availableAssignments);
-
-
-
             List<RouteEntity> plannedRoutes = new List<RouteEntity>();
+            var firstDay = DateTime.Now;
 
-            while (availableAssignments.Any())
+            for (int i = 0; i < numberOfDays; i++)
             {
-                DateTime routeTimeTracker = routeStartTime;
-                AssignmentEntity startAssignment = availableAssignments.First();
+                List<AssignmentEntity> availableAssignments = _routeRepo.GetNumberOfAssignments(numberOfDays);
+                var distances = _routeRepo.GetDistanceses(availableAssignments);
 
-                startAssignment.ArrivalTime = startAssignment.TimeWindowStart;
-                routeTimeTracker = routeTimeTracker.AddSeconds(startAssignment.Duration);
 
-                AssignmentEntity currentAssignment = startAssignment;
-
-                List<AssignmentEntity> assignmentsToRemove = new List<AssignmentEntity>();
-                List<AssignmentEntity> route = new List<AssignmentEntity> { startAssignment };
-
-                while (currentAssignment != null)
+                while (availableAssignments.Any())
                 {
-                    AssignmentEntity nextAssignment = null;
-                    double shortestDistanceToPotentialNext = Double.MaxValue;
+                    DateTime routeTimeTracker = firstDay;
+                    AssignmentEntity startAssignment = availableAssignments.First();
 
-                    foreach (var potentialNextAssignment in availableAssignments.Where(a => a != currentAssignment && a.TimeWindowEnd >= routeTimeTracker && route.Contains(a) == false))
+                    startAssignment.ArrivalTime = startAssignment.TimeWindowStart;
+                    routeTimeTracker = routeTimeTracker.AddSeconds(startAssignment.Duration);
+
+                    AssignmentEntity currentAssignment = startAssignment;
+
+                    List<AssignmentEntity> assignmentsToRemove = new List<AssignmentEntity>();
+                    List<AssignmentEntity> route = new List<AssignmentEntity> { startAssignment };
+
+                    while (currentAssignment != null)
                     {
-                        var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
-                            (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
-                            (d.AssignmentTwo == currentAssignment.Id && d.AssignmentOne == potentialNextAssignment.Id));
+                        AssignmentEntity nextAssignment = null;
+                        double shortestDistanceToPotentialNext = Double.MaxValue;
 
-                        // TODO: We need to find the error resulting in null exception, in the "distanceToFromCurrentToPotentialNextTuple".
-                        if (distanceToFromCurrentToPotentialNextTuple != null)
+                        foreach (var potentialNextAssignment in availableAssignments.Where(a => a != currentAssignment && a.TimeWindowEnd >= routeTimeTracker && route.Contains(a) == false))
                         {
-                            var travelTimeFromCurrentToPotentialNext = distanceToFromCurrentToPotentialNextTuple.DistanceBetween;
-                            if (travelTimeFromCurrentToPotentialNext != 0)
+                            var distanceToFromCurrentToPotentialNextTuple = distances.FirstOrDefault(d =>
+                                (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == potentialNextAssignment.Id) ||
+                                (d.AssignmentTwo == currentAssignment.Id && d.AssignmentOne == potentialNextAssignment.Id));
+
+                            // TODO: We need to find the error resulting in null exception, in the "distanceToFromCurrentToPotentialNextTuple".
+                            if (distanceToFromCurrentToPotentialNextTuple != null)
                             {
-                                if (travelTimeFromCurrentToPotentialNext < shortestDistanceToPotentialNext)
+                                var travelTimeFromCurrentToPotentialNext = distanceToFromCurrentToPotentialNextTuple.DistanceBetween;
+                                if (travelTimeFromCurrentToPotentialNext != 0)
                                 {
-                                    shortestDistanceToPotentialNext = travelTimeFromCurrentToPotentialNext;
-                                    nextAssignment = potentialNextAssignment;
-                                }  
+                                    if (travelTimeFromCurrentToPotentialNext < shortestDistanceToPotentialNext)
+                                    {
+                                        shortestDistanceToPotentialNext = travelTimeFromCurrentToPotentialNext;
+                                        nextAssignment = potentialNextAssignment;
+                                    }
+                                }
                             }
+
                         }
 
+                        if (nextAssignment != null)
+                        {
+                            routeTimeTracker = routeTimeTracker.AddSeconds(shortestDistanceToPotentialNext);
+                            nextAssignment.ArrivalTime = routeTimeTracker;
+
+                            routeTimeTracker = routeTimeTracker.AddSeconds(nextAssignment.Duration);
+
+                            route.Add(nextAssignment);
+                            assignmentsToRemove.Add(nextAssignment);
+                            currentAssignment = nextAssignment;
+                        }
+                        else
+                        {
+                            currentAssignment = null;
+                        }
                     }
 
-                    if (nextAssignment != null)
+                    plannedRoutes.Add(new RouteEntity() { RouteGuid = Guid.NewGuid(), Assignments = route });
+                    availableAssignments.Remove(startAssignment);
+                    foreach (var assignmentToRemove in assignmentsToRemove)
                     {
-                        routeTimeTracker = routeTimeTracker.AddSeconds(shortestDistanceToPotentialNext);
-                        nextAssignment.ArrivalTime = routeTimeTracker;
-
-                        routeTimeTracker = routeTimeTracker.AddSeconds(nextAssignment.Duration);
-
-                        route.Add(nextAssignment);
-                        assignmentsToRemove.Add(nextAssignment);
-                        currentAssignment = nextAssignment;
+                        availableAssignments.Remove(assignmentToRemove);
                     }
-                    else
+
+                }
+
+
+                // TODO: Remove when finished debug test.
+                int intCounter = 0;
+
+                foreach (var plannedRoute in plannedRoutes)
+                {
+                    foreach (var assignment in plannedRoute.Assignments)
                     {
-                        currentAssignment = null;
+                        intCounter++;
                     }
                 }
 
-                plannedRoutes.Add(new RouteEntity() { RouteGuid = Guid.NewGuid(), Assignments = route});
-                availableAssignments.Remove(startAssignment);
-                foreach (var assignmentToRemove in assignmentsToRemove)
-                {
-                    availableAssignments.Remove(assignmentToRemove);
-                }
-
-            }
-
-
-            // TODO: Remove when finished debug test.
-            int intCounter = 0;
-
-            foreach (var plannedRoute in plannedRoutes) { 
-                foreach (var assignment in plannedRoute.Assignments)
-                {
-                    intCounter++;
-                }
+                firstDay = firstDay.AddDays(i);
             }
 
 
