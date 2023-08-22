@@ -31,8 +31,17 @@ namespace ComfortCare.Api.Controllers
         {
             // TODO: make validation on user
             // TODO: get and return schedule for user
+            var loginResult = _validator.ValidateUser(loginDto.Initials, loginDto.Password);
 
-            return Ok(new EmployeeScheduleDto() { });
+
+            if (loginResult == true)
+            {
+                return Ok(new EmployeeScheduleDto() { });
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
