@@ -29,7 +29,7 @@ namespace ComfortCare.Domain.BusinessLogic
 
 
 
-        //TODO: Kent, please rewrite this section when done
+        //TODO: Kent, add logic to ensure that it has been at least 11 hours ago since employy has been working
         #region Methods
         public void GenerateSchema(List<RouteEntity> rutes)
         {
