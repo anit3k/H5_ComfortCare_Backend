@@ -1,7 +1,9 @@
-﻿namespace ComfortCare.Domain.BusinessLogic.interfaces
+﻿using ComfortCare.Domain.Entities;
+
+namespace ComfortCare.Domain.BusinessLogic.interfaces
 {
     public interface IPlanManager
     {
-        void CalculateNewStatementPeriod(DateTime startDate, DateTime endDate);
+        public List<RouteEntity> CalculateNewStatementPeriod(int numberOfDays, int numbersOfAssignments);
     }
 }
