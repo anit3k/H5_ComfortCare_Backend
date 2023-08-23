@@ -16,5 +16,16 @@ namespace ComfortCare.Data
             var result = _manager.CalculateNewStatementPeriod(days, numberOfAssignments);
             return result;
         }
+
+        public List<EmployeeEntity> CreateEmployeeRoutes(int employeeID)
+        {
+            var result = _manager.GetEmployeeRoutes(employeeID);
+            return result;
+        }
+
+        public void WipeAllRoutes()
+        {
+            _manager.WipeAllRoutes();
+        }
     }
 }

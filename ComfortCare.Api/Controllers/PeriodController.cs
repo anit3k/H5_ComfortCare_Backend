@@ -29,7 +29,24 @@ namespace ComfortCare.Api.Controllers
         {
             var result = _comfortCareSmartPlanner.CreateStatementPeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
             return Ok(result);
-        }               
+        }
+
+        [HttpPost("GetRoutesForEmployee")]
+        public IActionResult GetRoutesForEmployee(EmployeeDto employeeDto)
+        {
+            var result = _comfortCareSmartPlanner.CreateEmployeeRoutes(employeeDto.EmployeeID);
+            return Ok(result);
+        }
+
+        [HttpPost("WipeAllRoutes")]
+        public IActionResult WipeAllRoutes()
+        {
+            _comfortCareSmartPlanner.WipeAllRoutes();
+            return Ok();
+        }
+
+        
+
         #endregion
 
         #region Methods

@@ -25,11 +25,24 @@ namespace ComfortCare.Domain.BusinessLogic
         #region Methods
         public List<RouteEntity> CalculateNewStatementPeriod(int numberOfDays, int numberOfAssignments)
         {
-
             var result = _routeGen.CalculateDaylyRoutes(numberOfDays, numberOfAssignments);
-           _schemaGen.GenerateSchema(result);
+            List<EmployeeEntity> employees = _schemaGen.GenerateSchema(result);
+            _schemaGen.SaveSchema(employees);
+
             return result;
-        }       
+        }
+
+        public List<EmployeeEntity> GetEmployeeRoutes(int employeeID)
+        {
+            var result = _schemaGen.GetRoutesForCurrentEmployee(employeeID);
+
+            return result;
+        }
+
+        public void WipeAllRoutes()
+        {
+           _schemaGen.WipeAllRoutes();
+        }
         #endregion
     }
 }

@@ -11,8 +11,9 @@ namespace ComfortCare.Domain.Entities
     /// </summary>
     public class EmployeeEntity
     {
-        public int ID { get; set; }
+        public int EmployeeId { get; set; }
         public int Weeklyworkhours { get; set; }
         public int EmployeeType { get; set; }
+        public RouteEntity Route { get; set; }
     }
 }
