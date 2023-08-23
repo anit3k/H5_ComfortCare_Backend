@@ -9,7 +9,7 @@ namespace ComfortCare.Data.Models
     {
         public Assignment()
         {
-            EmployeeRoute = new HashSet<EmployeeRoute>();
+            RouteAssignment = new HashSet<RouteAssignment>();
         }
 
         public int Id { get; set; }
@@ -23,6 +23,6 @@ namespace ComfortCare.Data.Models
         public virtual Citizen Citizen { get; set; }
         public virtual EmployeeType EmployeeTypeMaster { get; set; }
         public virtual EmployeeType EmployeeTypeSlave { get; set; }
-        public virtual ICollection<EmployeeRoute> EmployeeRoute { get; set; }
+        public virtual ICollection<RouteAssignment> RouteAssignment { get; set; }
     }
 }

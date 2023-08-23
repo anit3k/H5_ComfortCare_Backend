@@ -9,8 +9,8 @@ namespace ComfortCare.Data.Models
     {
         public Employee()
         {
-            EmployeeEmployeeRoute = new HashSet<EmployeeEmployeeRoute>();
             EmployeePreference = new HashSet<EmployeePreference>();
+            EmployeeRoute = new HashSet<EmployeeRoute>();
             EmployeeSkill = new HashSet<EmployeeSkill>();
             EmployeeStatementPeriod = new HashSet<EmployeeStatementPeriod>();
         }
@@ -24,8 +24,8 @@ namespace ComfortCare.Data.Models
         public int? SkillId { get; set; }
 
         public virtual EmployeeType EmployeeType { get; set; }
-        public virtual ICollection<EmployeeEmployeeRoute> EmployeeEmployeeRoute { get; set; }
         public virtual ICollection<EmployeePreference> EmployeePreference { get; set; }
+        public virtual ICollection<EmployeeRoute> EmployeeRoute { get; set; }
         public virtual ICollection<EmployeeSkill> EmployeeSkill { get; set; }
         public virtual ICollection<EmployeeStatementPeriod> EmployeeStatementPeriod { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 2,
-   "ContextClassName": "ComfortCareDbContext",
+   "ContextClassName": "ComfortCareContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -40,10 +40,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[EmployeeEmployeeRoute]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[EmployeePreference]",
          "ObjectType": 0
       },
@@ -72,6 +68,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[RouteAssignment]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Skill]",
          "ObjectType": 0
       },
@@ -92,7 +92,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "033a1e4167a4.ComfortCare.dbo",
+   "UiHint": "f8e21a447244.ComfortCare.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
