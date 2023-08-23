@@ -1,8 +1,8 @@
 ﻿using ComfortCare.Domain.Entities;
 
-namespace ComfortCare.Data
+namespace ComfortCare.Data.Interfaces
 {
-    public interface IGetStatementPeriod
+    public interface IStatementPeriod
     {
         public List<RouteEntity> CreateStatementPeriod(int days, int numberOfAssignments);
 

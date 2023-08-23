@@ -1,5 +1,5 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Data;
+using ComfortCare.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -14,11 +14,11 @@ namespace ComfortCare.Api.Controllers
     {
         #region fields
         private readonly IValidate _validator;
-        private readonly IGetSchema _schema;
+        private readonly ISchema _schema;
         #endregion
 
         #region Constructor
-        public LoginController(IValidate validator, IGetSchema schema)
+        public LoginController(IValidate validator, ISchema schema)
         {
             _validator = validator;
             _schema = schema;

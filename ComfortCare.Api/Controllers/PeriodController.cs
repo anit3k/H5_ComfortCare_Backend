@@ -1,5 +1,5 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Data;
+using ComfortCare.Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -13,11 +13,11 @@ namespace ComfortCare.Api.Controllers
     public class PeriodController : ControllerBase
     {
         #region fields
-        private readonly IGetStatementPeriod _comfortCareSmartPlanner;
+        private readonly IStatementPeriod _comfortCareSmartPlanner;
         #endregion
 
         #region Constructor
-        public PeriodController(IGetStatementPeriod smartPlanner)
+        public PeriodController(IStatementPeriod smartPlanner)
         {
             _comfortCareSmartPlanner = smartPlanner;
         }

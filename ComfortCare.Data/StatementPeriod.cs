@@ -3,11 +3,11 @@ using ComfortCare.Domain.Entities;
 
 namespace ComfortCare.Data
 {   
-    public class GetStatementPeriod : IGetStatementPeriod
+    public class StatementPeriod : IStatementPeriod
     {
         private readonly IPlanManager _manager;
 
-        public GetStatementPeriod(IPlanManager manager)
+        public StatementPeriod(IPlanManager manager)
         {
             _manager = manager;
         }

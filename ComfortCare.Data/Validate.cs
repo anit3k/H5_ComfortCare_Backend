@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ComfortCare.Data.Interfaces;
+using ComfortCare.Data.Models;
 
 namespace ComfortCare.Data
 {

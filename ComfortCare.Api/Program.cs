@@ -1,4 +1,5 @@
 using ComfortCare.Data;
+using ComfortCare.Data.Interfaces;
 using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Service;
@@ -26,8 +27,8 @@ builder.Services.AddTransient<IPlanManager, PlanManager>();
 builder.Services.AddTransient<IRouteConstructionRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
-builder.Services.AddTransient<IGetSchema, GetSchema>();
-builder.Services.AddTransient<IGetStatementPeriod, GetStatementPeriod>();
+builder.Services.AddTransient<ISchema, Schema>();
+builder.Services.AddTransient<IStatementPeriod, StatementPeriod>();
 
 var _allowAllOriginsForDevelopment = "_allowAllOriginsForDevelopment";
 builder.Services.AddCors(options =>

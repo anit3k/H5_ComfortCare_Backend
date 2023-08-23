@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComfortCare.Api", "ComfortC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComfortCare.Domain", "ComfortCare.Domain\ComfortCare.Domain.csproj", "{5957BDFA-0731-464F-A305-41C650D8B8D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComfortCare.Service", "ComfortCare.Service\ComfortCare.Service.csproj", "{D4D892FD-9ACB-4CB6-9BDD-61AE32BA7226}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComfortCare.Data", "ComfortCare.Data\ComfortCare.Data.csproj", "{E510D189-43A9-4415-A816-5BBAD80418C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComfortCare.Data", "ComfortCare.Data\ComfortCare.Data.csproj", "{E510D189-43A9-4415-A816-5BBAD80418C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{5957BDFA-0731-464F-A305-41C650D8B8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5957BDFA-0731-464F-A305-41C650D8B8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5957BDFA-0731-464F-A305-41C650D8B8D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4D892FD-9ACB-4CB6-9BDD-61AE32BA7226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4D892FD-9ACB-4CB6-9BDD-61AE32BA7226}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4D892FD-9ACB-4CB6-9BDD-61AE32BA7226}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4D892FD-9ACB-4CB6-9BDD-61AE32BA7226}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E510D189-43A9-4415-A816-5BBAD80418C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E510D189-43A9-4415-A816-5BBAD80418C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E510D189-43A9-4415-A816-5BBAD80418C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
