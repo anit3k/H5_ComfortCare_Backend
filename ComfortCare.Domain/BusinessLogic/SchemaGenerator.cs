@@ -41,42 +41,116 @@ namespace ComfortCare.Domain.BusinessLogic
         //TODO: Kent - add logic to check for employees who have not worked within other timespans for 48 hours within this period
         #region Methods
 
-        public List<EmployeeEntity> GenerateSchema(List<RouteEntity> rutes)
+
+        public List<EmployeeEntity> GenerateSchema(List<RouteEntity> routes)
         {
-            List<RouteEntity> tempRutes = new List<RouteEntity>(rutes);
+            // Split routes into two categories based on total time
+            var splitRoutes = SplitRoutesByTime(routes);
 
-            List<List<RouteEntity>> splitRoutes = new List<List<RouteEntity>>();
-            splitRoutes.Add(new List<RouteEntity>());
-            splitRoutes.Add(new List<RouteEntity>());
+            // Get all employees and split them into full-time and part-time
+            var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
+            var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
 
-            foreach (RouteEntity routeEntity in tempRutes)
+            // Assign routes to employees based on their working hours
+            return AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
+        }
+
+        private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
+        {
+            var longRoutes = new List<RouteEntity>();
+            var shortRoutes = new List<RouteEntity>();
+
+            foreach (RouteEntity routeEntity in routes)
             {
-                var start = routeEntity.Assignments[0].ArrivalTime;
-                var end = routeEntity.Assignments[routeEntity.Assignments.Count - 1].ArrivalTime;
-                var totaltime = end - start;
-                if (totaltime < TimeSpan.FromHours(5))
+                var totalTime = routeEntity.Assignments.Last().ArrivalTime - routeEntity.Assignments.First().ArrivalTime;
+                if (totalTime > TimeSpan.FromHours(5))
                 {
-                    splitRoutes[0].Add(routeEntity);
+                    longRoutes.Add(routeEntity);
                 }
                 else
                 {
-                    splitRoutes[1].Add(routeEntity);
+                    shortRoutes.Add(routeEntity);
                 }
             }
 
+            return new List<List<RouteEntity>> { longRoutes, shortRoutes };
+        }
 
-            List<EmployeeEntity> employees = _employeesRepo.GetAllEmployees();
-            //Add a route to each employee as long as there are routes left
+        private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime)
+        {
+            var employeesNeededForTheRoutes = new List<EmployeeEntity>();
+
+            // Assign long routes to full-time employees
+            AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime, employeesNeededForTheRoutes);
+
+            // Assign short routes to part-time employees
+            AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime, employeesNeededForTheRoutes);
+
+            return employeesNeededForTheRoutes;
+        }
+
+        private void AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, List<EmployeeEntity> employeesNeededForTheRoutes)
+        {
             foreach (var employee in employees)
             {
-                if (tempRutes.Count > 0)
+                if (routes.Count > 0)
                 {
-                    employee.Route = tempRutes[0];
-                    tempRutes.RemoveAt(0);
+                    employee.Route = routes[0];
+                    routes.RemoveAt(0);
                 }
+                employeesNeededForTheRoutes.Add(employee);
             }
-            return employees;
         }
+
+
+        //public List<EmployeeEntity> GenerateSchema(List<RouteEntity> rutes)
+        //{
+        //    List<RouteEntity> tempRutes = new List<RouteEntity>(rutes);
+
+        //    List<List<RouteEntity>> splitRoutes = new List<List<RouteEntity>>();
+        //    splitRoutes.Add(new List<RouteEntity>());
+        //    splitRoutes.Add(new List<RouteEntity>());
+
+        //    foreach (RouteEntity routeEntity in tempRutes)
+        //    {
+        //        var start = routeEntity.Assignments[0].ArrivalTime;
+        //        var end = routeEntity.Assignments[routeEntity.Assignments.Count - 1].ArrivalTime;
+        //        var totaltime = end - start;
+        //        if (totaltime > TimeSpan.FromHours(5))
+        //        {
+        //            splitRoutes[0].Add(routeEntity);
+        //        }
+        //        else
+        //        {
+        //            splitRoutes[1].Add(routeEntity);
+        //        }
+        //    }
+
+
+        //    List<EmployeeEntity> employees = _employeesRepo.GetAllEmployees();
+        //    List<EmployeeEntity> employeesFullTime = employees.Where(e => e.Weeklyworkhours == 40).ToList();
+        //    List<EmployeeEntity> employeesPartTime = employees.Where(e => e.Weeklyworkhours < 40).ToList();
+        //    List<EmployeeEntity> employeesNeededForTheRoutes = new List<EmployeeEntity>();
+        //    foreach (var employee in employeesFullTime)
+        //    {
+        //        if (splitRoutes[0].Count > 0)
+        //        {
+        //            employee.Route = splitRoutes[0][0];
+        //            splitRoutes[0].RemoveAt(0);
+        //        }
+        //        employeesNeededForTheRoutes.Add(employee);
+        //    }
+        //    foreach (var employee in employeesPartTime)
+        //    {
+        //        if (splitRoutes[1].Count > 0)
+        //        {
+        //            employee.Route = splitRoutes[1][0];
+        //            splitRoutes[1].RemoveAt(0);
+        //        }
+        //        employeesNeededForTheRoutes.Add(employee);
+        //    }
+        //    return employeesNeededForTheRoutes;
+        //}
 
 
         public void SaveSchema(List<EmployeeEntity> employees)
