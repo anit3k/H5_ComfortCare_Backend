@@ -44,6 +44,27 @@ namespace ComfortCare.Domain.BusinessLogic
         public List<EmployeeEntity> GenerateSchema(List<RouteEntity> rutes)
         {
             List<RouteEntity> tempRutes = new List<RouteEntity>(rutes);
+
+            List<List<RouteEntity>> splitRoutes = new List<List<RouteEntity>>();
+            splitRoutes.Add(new List<RouteEntity>());
+            splitRoutes.Add(new List<RouteEntity>());
+
+            foreach (RouteEntity routeEntity in tempRutes)
+            {
+                var start = routeEntity.Assignments[0].ArrivalTime;
+                var end = routeEntity.Assignments[routeEntity.Assignments.Count - 1].ArrivalTime;
+                var totaltime = end - start;
+                if (totaltime < TimeSpan.FromHours(5))
+                {
+                    splitRoutes[0].Add(routeEntity);
+                }
+                else
+                {
+                    splitRoutes[1].Add(routeEntity);
+                }
+            }
+
+
             List<EmployeeEntity> employees = _employeesRepo.GetAllEmployees();
             //Add a route to each employee as long as there are routes left
             foreach (var employee in employees)

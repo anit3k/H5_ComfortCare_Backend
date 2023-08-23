@@ -7,5 +7,13 @@
     {
         public Guid RouteGuid { get; set; }
         public List<AssignmentEntity> Assignments { get; set; }
+        private int _numberOfAssignments;
+
+        public int NumberOfAssignment
+        {
+            get { return Assignments.Count; }
+            set { _numberOfAssignments = value; }
+        }
+
     }
 }
