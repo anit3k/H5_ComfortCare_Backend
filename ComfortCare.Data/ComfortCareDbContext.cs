@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ComfortCare.Data.Models
 {
-    public partial class ComfortCareContext : DbContext
+    public partial class ComfortCareDbContext : DbContext
     {
-        public ComfortCareContext()
+        public ComfortCareDbContext()
         {
         }
 
-        public ComfortCareContext(DbContextOptions<ComfortCareContext> options)
+        public ComfortCareDbContext(DbContextOptions<ComfortCareDbContext> options)
             : base(options)
         {
         }
