@@ -106,7 +106,7 @@ namespace ComfortCare.Data
 
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
-           
+
             // Loop through all employees adding their routes to the database
             foreach (var employee in employees)
             {
@@ -136,6 +136,43 @@ namespace ComfortCare.Data
             }
             // Saving changes to Database
             _context.SaveChanges();
+        }
+
+        public Tuple<string, List<Assignment>> GetSchemas(string employeeInitials, string employeePassword)
+        {
+            var employee = _context.Employee
+                .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
+
+            List<EmployeeRoute> employeeRoutes = _context.EmployeeRoute
+                .Where(er => er.EmployeeId == employee.Id)
+                .ToList();
+
+            List<int> employeeRouteIds = employeeRoutes.Select(er => er.Id).ToList();
+
+            List<Assignment> assignments = _context.RouteAssignment
+                .Where(ra => employeeRouteIds.Contains(ra.EmployeeRouteId))
+                .Include(ra => ra.Assignment.AssignmentType)
+                .Include(ra => ra.Assignment.Citizen)
+                    .ThenInclude(re => re.Residence)
+                .Include(ra => ra.Assignment.RouteAssignment)
+                .Select(ra => ra.Assignment)
+                .ToList();
+
+            // Now fetch the ArrivalTime for each Assignment
+            foreach (var assignment in assignments)
+            {
+                var routeAssignment = _context.RouteAssignment
+                    .FirstOrDefault(ra => ra.AssignmentId == assignment.Id);
+
+                if (routeAssignment != null)
+                {
+                    assignment.RouteAssignment.Add(routeAssignment);
+                }
+            }
+
+            var employeeName = employee.EmployeeName;
+            var list = new List<Assignment>();
+            return Tuple.Create(employeeName, assignments);
         }
 
         #endregion

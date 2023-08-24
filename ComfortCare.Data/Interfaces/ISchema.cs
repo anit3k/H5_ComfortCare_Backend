@@ -7,6 +7,6 @@ namespace ComfortCare.Data.Interfaces
     /// </summary>
     public interface ISchema
     {
-        EmployeeRoute CurrentSchema(Employee employee);
+        Tuple<string, List<Assignment>> CurrentSchema(string employeeInitials, string employeePassword);
     }
 }
