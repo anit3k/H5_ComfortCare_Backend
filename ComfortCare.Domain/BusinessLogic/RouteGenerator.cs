@@ -11,11 +11,11 @@ namespace ComfortCare.Domain.BusinessLogic
     public class RouteGenerator
     {
         #region fields
-        private readonly IRouteConstructionRepo _routeRepo;
+        private readonly IRouteRepo _routeRepo;
         #endregion
 
         #region Constructor
-        public RouteGenerator(IRouteConstructionRepo routeRepo)
+        public RouteGenerator(IRouteRepo routeRepo)
         {
             _routeRepo = routeRepo;
         }

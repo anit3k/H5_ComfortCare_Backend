@@ -1,25 +1,18 @@
 ﻿using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
-using System.Globalization;
 
 namespace ComfortCare.Domain.BusinessLogic
 {
 
     /// <summary>
-    /// This class is used to populate routes with employees, it should use the rules for workinghours
-    /// and look at the induvidual employee to calculate their specific working time etc...
+    /// This class is used to populate routes with employees, it should use the rules for working hours
+    /// and look at the individual employee to calculate their specific working time etc...
     /// </summary>
     public class SchemaGenerator
     {
-
-
         #region Fields
         private readonly IEmployeesRepo _employeesRepo;
-
         #endregion
-
-
-
 
         #region Constructor 
         public SchemaGenerator(IEmployeesRepo employeesRepo)
@@ -27,19 +20,10 @@ namespace ComfortCare.Domain.BusinessLogic
             _employeesRepo = employeesRepo;
         }
         #endregion
-
-
-
-
-
-
-
-
-
-        //TODO: Kent, add logic to ensure that it has been at least 11 hours ago since employy has been working
-        //TODO: Kent - add logic to check for employees who have not worked within other timespans for 48 hours within this period
+        
+        //TODO: Kent, add logic to ensure that it has been at least 11 hours ago since employ has been working
+        //TODO: Kent - add logic to check for employees who have not worked within other timespan for 48 hours within this period
         #region Methods
-
 
         public void GenerateSchema(List<RouteEntity> routes)
         {
@@ -81,10 +65,8 @@ namespace ComfortCare.Domain.BusinessLogic
         {
             var employeesNeededForTheRoutes = new List<EmployeeEntity>();
 
-            // Assign long routes to full-time employees
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime, employeesNeededForTheRoutes);
 
-            // Assign short routes to part-time employees
             AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime, employeesNeededForTheRoutes);
 
             return employeesNeededForTheRoutes;
@@ -102,82 +84,7 @@ namespace ComfortCare.Domain.BusinessLogic
                 employeesNeededForTheRoutes.Add(employee);
             }
             return employeesNeededForTheRoutes;
-        }
-
-
-        //public List<EmployeeEntity> GenerateSchema(List<RouteEntity> rutes)
-        //{
-        //    List<RouteEntity> tempRutes = new List<RouteEntity>(rutes);
-
-        //    List<List<RouteEntity>> splitRoutes = new List<List<RouteEntity>>();
-        //    splitRoutes.Add(new List<RouteEntity>());
-        //    splitRoutes.Add(new List<RouteEntity>());
-
-        //    foreach (RouteEntity routeEntity in tempRutes)
-        //    {
-        //        var start = routeEntity.Assignments[0].ArrivalTime;
-        //        var end = routeEntity.Assignments[routeEntity.Assignments.Count - 1].ArrivalTime;
-        //        var totaltime = end - start;
-        //        if (totaltime > TimeSpan.FromHours(5))
-        //        {
-        //            splitRoutes[0].Add(routeEntity);
-        //        }
-        //        else
-        //        {
-        //            splitRoutes[1].Add(routeEntity);
-        //        }
-        //    }
-
-
-        //    List<EmployeeEntity> employees = _employeesRepo.GetAllEmployees();
-        //    List<EmployeeEntity> employeesFullTime = employees.Where(e => e.Weeklyworkhours == 40).ToList();
-        //    List<EmployeeEntity> employeesPartTime = employees.Where(e => e.Weeklyworkhours < 40).ToList();
-        //    List<EmployeeEntity> employeesNeededForTheRoutes = new List<EmployeeEntity>();
-        //    foreach (var employee in employeesFullTime)
-        //    {
-        //        if (splitRoutes[0].Count > 0)
-        //        {
-        //            employee.Route = splitRoutes[0][0];
-        //            splitRoutes[0].RemoveAt(0);
-        //        }
-        //        employeesNeededForTheRoutes.Add(employee);
-        //    }
-        //    foreach (var employee in employeesPartTime)
-        //    {
-        //        if (splitRoutes[1].Count > 0)
-        //        {
-        //            employee.Route = splitRoutes[1][0];
-        //            splitRoutes[1].RemoveAt(0);
-        //        }
-        //        employeesNeededForTheRoutes.Add(employee);
-        //    }
-        //    return employeesNeededForTheRoutes;
-        //}
-
-
-        public void SaveSchema(List<EmployeeEntity> employees)
-        {
-            _employeesRepo.InsertRoutes(employees);
-        }
-
-
-
-        public List<EmployeeEntity> GetRoutesForCurrentEmployee(int employeeId)
-        {
-            return _employeesRepo.GetRoutesForCurrentEmployee(employeeId);
-        }
-
-
-        public void WipeAllRoutes()
-        {
-            _employeesRepo.WipeAllRoutes();
-        }
-
-
-
-
-
-
+        }       
         #endregion
     }
 }

@@ -9,7 +9,7 @@ namespace ComfortCare.Data
     /// This repository is used by the planmanager to read information from database and save routes calculated for a 
     /// statement period
     /// </summary>
-    public class ComfortCareRepository : IRouteConstructionRepo, IEmployeesRepo
+    public class ComfortCareRepository : IRouteRepo, IEmployeesRepo
     {
         #region fields
         private readonly ComfortCareDbContext _context;
