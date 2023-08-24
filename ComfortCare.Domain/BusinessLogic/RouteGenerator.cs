@@ -27,7 +27,7 @@ namespace ComfortCare.Domain.BusinessLogic
             List<RouteEntity> plannedRoutes = new List<RouteEntity>();
             var currentDay = DateTime.Now.Date;
 
-            for (int i = 0; i < numberOfDays; i++)
+            for (int i = 1; i < numberOfDays+1; i++)
             {
                 List<AssignmentEntity> availableAssignments = _routeRepo.GetNumberOfAssignments(numberOfAssigments);
 
@@ -119,7 +119,7 @@ namespace ComfortCare.Domain.BusinessLogic
 
                 }
 
-                currentDay = currentDay.AddDays(i+1);
+                currentDay = currentDay.AddDays(1);
             }
 
             return plannedRoutes;
