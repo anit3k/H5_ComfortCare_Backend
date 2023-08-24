@@ -106,12 +106,6 @@ namespace ComfortCare.Data
 
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
-            throw new NotImplementedException();
-        }
-
-
-        public void InsertRoutes(List<EmployeeEntity> employees)
-        {
             // Loop through all employees adding their routes to the database
             foreach (var employee in employees)
             {
@@ -141,7 +135,7 @@ namespace ComfortCare.Data
             }
             // Saving changes to Database
             _context.SaveChanges();
-        } 
+        }       
 
         #endregion
     }
