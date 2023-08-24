@@ -1,9 +1,12 @@
 ﻿using Bogus;
 using ComfortCare.Api.Models;
+using ComfortCare.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComfortCare.Api.Controllers
 {
+    //TODO: To be removed befor deployment to production
     /// <summary>
     /// This controller is used for testing purposes, only in the development phase, to make it 
     /// possible to used the back and frontend together while the login controller is being created
@@ -13,12 +16,13 @@ namespace ComfortCare.Api.Controllers
     public class TestController : ControllerBase
     {
         #region fields
+        private readonly ComfortCareDbContext _dbContext;
         #endregion
 
         #region Constructor
-        public TestController()
+        public TestController(ComfortCareDbContext dbContext)
         {
-
+            this._dbContext = dbContext;
         }
         #endregion
 
@@ -34,6 +38,55 @@ namespace ComfortCare.Api.Controllers
         {
             return Ok(GenerateDummyData());
         }
+
+
+
+        [HttpPost("GetEmployeeRoutes")]
+        public IActionResult GetEmployeeRoutes([FromBody] GetRouteDto employeeId)
+        {
+            try
+            {
+                var response = GetRoutesForEmployee(employeeId.EmployeeId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// This controller method is used to wipe the EmployeeRoute and RouteAssignment tables
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("WipeEmployeeRouteAndRouteAssignment")]
+        public IActionResult WipeEmployeeRouteAndRouteAssignment()
+        {
+            try
+            {
+                WipeRoutesAndAssignments();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         #endregion
 
         #region Methods
@@ -103,6 +156,157 @@ namespace ComfortCare.Api.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// This methos is wiping and resetting the EmployeeRoute and RouteAssignment tables
+        /// </summary>
+        private void WipeRoutesAndAssignments()
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Delete all records from the RouteAssignment table that reference EmployeeRoute records
+                    var routeAssignmentsToDelete = _dbContext.RouteAssignment
+                        .Where(ra => _dbContext.EmployeeRoute.Any(er => er.Id == ra.EmployeeRouteId));
+                    _dbContext.RouteAssignment.RemoveRange(routeAssignmentsToDelete);
+                    _dbContext.SaveChanges();
+
+                    // Delete all records from the EmployeeRoute table
+                    _dbContext.EmployeeRoute.RemoveRange(_dbContext.EmployeeRoute);
+                    _dbContext.SaveChanges();
+
+                    // Reset the ID for the EmployeeRoute table (specific to your database)
+                    _dbContext.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('EmployeeRoute', RESEED, 0);");
+
+                    // Reset the ID for the RouteAssignment table (specific to your database)
+                    _dbContext.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('RouteAssignment', RESEED, 0);");
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Thismethod is use to get the the routes, assignments, how many each day and the total
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private EmployeeRouteDetailsDto GetRoutesForEmployee(int employeeId)
+        {
+            // Validate if the employee exists
+            var employeeExists = _dbContext.Employee.Any(e => e.Id == employeeId);
+            if (!employeeExists)
+            {
+                throw new Exception($"Employee with ID {employeeId} not found.");
+            }
+
+            // Fetch the routes for the employee
+            var routes = (from er in _dbContext.EmployeeRoute
+                          join ra in _dbContext.RouteAssignment on er.Id equals ra.EmployeeRouteId
+                          join a in _dbContext.Assignment on ra.AssignmentId equals a.Id
+                          join at in _dbContext.AssignmentType on a.AssignmentTypeId equals at.Id
+                          where er.EmployeeId == employeeId
+                          select new RouteDetailsDto
+                          {
+                              EmployeeRouteID = er.Id,
+                              RouteAssignmentID = ra.Id,
+                              AssignmentID = ra.AssignmentId,
+                              ArrivalTime = ra.ArrivalTime,
+                              EndTime = ra.ArrivalTime.AddSeconds(at.DurationInSeconds) // Calculating EndTime
+                          }).ToList();
+
+            // Calculate the total routes count by counting unique EmployeeRouteID
+            int totalRoutes = routes.Select(r => r.EmployeeRouteID).Distinct().Count();
+
+            // Calculate the daily assignments and routes count
+            var dailyAssignments = routes.GroupBy(r => new { r.ArrivalTime.Date, r.EmployeeRouteID })
+                                        .Select(g => new
+                                        {
+                                            Date = g.Key.Date,
+                                            RouteId = g.Key.EmployeeRouteID,
+                                            AssignmentsCount = g.Count()
+                                        })
+                                        .GroupBy(r => r.Date)
+                                        .Select(g => new DailyAssignmentsDto
+                                        {
+                                            Date = g.Key,
+                                            AssignmentsCount = g.Sum(a => a.AssignmentsCount),
+                                            RoutesCount = g.Count()
+                                        }).ToList();
+
+            // Prepare the response DTO
+            var response = new EmployeeRouteDetailsDto
+            {
+                EmployeeId = employeeId,
+                TotalRoutes = totalRoutes,
+                DailyAssignments = dailyAssignments,
+                Routes = routes
+            };
+
+            return response;
+        }
+
         #endregion
     }
+
+
+
+
+    #region DtoClasses
+
+    /// <summary>
+    /// This class is used to get the route details
+    /// </summary>
+    public class GetRouteDto
+    {
+        public int EmployeeId { get; set; }
+    }
+
+
+    /// <summary>
+    /// This class is used to get the employee route details
+    /// </summary>
+    public class EmployeeRouteDetailsDto
+    {
+        public int EmployeeId { get; set; }
+        public int TotalRoutes { get; set; } // Total routes count
+        public List<DailyAssignmentsDto> DailyAssignments { get; set; } // Daily assignments count
+        public List<RouteDetailsDto> Routes { get; set; }
+    }
+
+
+    /// <summary>
+    /// This class is used to get the daily assignments
+    /// </summary>
+    public class DailyAssignmentsDto
+    {
+        public DateTime Date { get; set; }
+        public int AssignmentsCount { get; set; }
+        public int RoutesCount { get; set; } // Tilføjet denne linje
+    }
+
+    /// <summary>
+    /// This class is used to get the route details
+    /// </summary>
+    public class RouteDetailsDto
+    {
+        public int EmployeeRouteID { get; set; }
+        public int RouteAssignmentID { get; set; }
+        public int AssignmentID { get; set; }
+        public DateTime ArrivalTime { get; set; }
+        public DateTime EndTime { get; set; }
+    }
+
+
+
+
+
+    #endregion
 }
