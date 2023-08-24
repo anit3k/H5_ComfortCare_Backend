@@ -20,24 +20,31 @@ namespace ComfortCare.Domain.BusinessLogic
             _employeesRepo = employeesRepo;
         }
         #endregion
-        
+
         //TODO: Kent, add logic to ensure that it has been at least 11 hours ago since employ has been working
         //TODO: Kent - add logic to check for employees who have not worked within other timespan for 48 hours within this period
         #region Methods
 
         public void GenerateSchema(List<RouteEntity> routes)
         {
-            // Split routes into two categories based on total time
-            var splitRoutes = SplitRoutesByTime(routes);
 
-            // Get all employees and split them into full-time and part-time
-            var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
-            var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
+            var groups = routes.GroupBy(r => r.RouteDate).Select(group => group.ToList()).ToList();
 
-            // Assign routes to employees based on their working hours
-            var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
+            for (int i = 0; i < groups.Count - 1; i++)
+            {
 
-            _employeesRepo.AddEmployeesToRoute(result);
+                // Split routes into two categories based on total time
+                var splitRoutes = SplitRoutesByTime(groups[i]);
+
+                // Get all employees and split them into full-time and part-time
+                var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
+                var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
+
+                // Assign routes to employees based on their working hours
+                var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
+
+                _employeesRepo.AddEmployeesToRoute(result);
+            }
         }
 
         private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
@@ -73,18 +80,18 @@ namespace ComfortCare.Domain.BusinessLogic
         }
 
         private List<EmployeeEntity> AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, List<EmployeeEntity> employeesNeededForTheRoutes)
-        {            
+        {
             foreach (var employee in employees)
             {
                 if (routes.Count > 0)
                 {
                     employee.Route = routes[0];
+                    employeesNeededForTheRoutes.Add(employee);
                     routes.RemoveAt(0);
                 }
-                employeesNeededForTheRoutes.Add(employee);
             }
             return employeesNeededForTheRoutes;
-        }       
+        }
         #endregion
     }
 }

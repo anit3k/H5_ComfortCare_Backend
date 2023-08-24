@@ -8,6 +8,7 @@
         public Guid RouteGuid { get; set; }
         public List<AssignmentEntity> Assignments { get; set; }
         private int _numberOfAssignments;
+        public DateTime RouteDate { get; set; }
 
         public int NumberOfAssignment
         {

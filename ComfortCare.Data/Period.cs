@@ -12,10 +12,9 @@ namespace ComfortCare.Data
         {
             _manager = manager;
         }
-        public List<RouteEntity> CreatePeriod(int days, int numberOfAssignments)
+        public void CreatePeriod(int days, int numberOfAssignments)
         {
-            var result = _manager.CalculateNewPeriod(days, numberOfAssignments);
-            return result;
+            _manager.CalculateNewPeriod(days, numberOfAssignments);
         }
 
         //public List<EmployeeEntity> CreateEmployeeRoutes(int employeeID)

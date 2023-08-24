@@ -2,10 +2,11 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using ComfortCare.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace ComfortCare.Data.Models
+namespace ComfortCare.Data
 {
     public partial class ComfortCareDbContext : DbContext
     {

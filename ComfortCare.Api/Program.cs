@@ -2,7 +2,6 @@ using ComfortCare.Data;
 using ComfortCare.Data.Interfaces;
 using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Domain.BusinessLogic.interfaces;
-using ComfortCare.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient<IDistanceRequest, RouteDistanceAPI>();
 
 builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 {

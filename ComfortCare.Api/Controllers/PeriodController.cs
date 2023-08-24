@@ -27,8 +27,8 @@ namespace ComfortCare.Api.Controllers
         [HttpPost("CalculatePeriod")]
         public IActionResult CalculatePeriod(PeriodDto periodDto) 
         {
-            var result = _comfortCareSmartPlanner.CreatePeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
-            return Ok(result);
+            _comfortCareSmartPlanner.CreatePeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
+            return Ok();
         }
 
         //[HttpPost("GetRoutesForEmployee")]

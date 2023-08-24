@@ -106,36 +106,37 @@ namespace ComfortCare.Data
 
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
+           
             // Loop through all employees adding their routes to the database
             foreach (var employee in employees)
             {
-                var route = employee.Route;
-                if (route != null && route.Assignments != null)
-                {
-                    foreach (var assignment in route.Assignments)
-                    {
-                        // Creates and inserts EmployeeRoute
-                        var employeeRoute = new EmployeeRoute
-                        {
-                            AssignmentId = assignment.Id,
-                            ArrivalTime = assignment.ArrivalTime
-                        };
-                        _context.EmployeeRoute.Add(employeeRoute);
-                        _context.SaveChanges(); // Save changes to generate the Id for employeeRoute
+                var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
 
-                        // Creates and inserts EmployeeEmployeeRoute
-                        var employeeEmployeeRoute = new EmployeeEmployeeRoute
-                        {
-                            EmployeeId = employee.EmployeeId,
-                            EmployeeRouteId = employeeRoute.Id // Now this Id is valid
-                        };
-                        _context.EmployeeEmployeeRoute.Add(employeeEmployeeRoute);
-                    }
+                var employeeRoute = new EmployeeRoute()
+                {
+                    Employee = employeeQuery,
+                };
+
+
+
+                foreach (var assignment in employee.Route.Assignments)
+                {
+
+                    var employeeAssignment = new RouteAssignment()
+                    {
+                        EmployeeRoute = employeeRoute,
+                        Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
+                        ArrivalTime = assignment.ArrivalTime
+                    };
+
+                    employeeRoute.RouteAssignment.Add(employeeAssignment);
+                    //_context.RouteAssignment.Add(employeeAssignment);
                 }
+                _context.EmployeeRoute.Add(employeeRoute);
             }
             // Saving changes to Database
             _context.SaveChanges();
-        }       
+        }
 
         #endregion
     }

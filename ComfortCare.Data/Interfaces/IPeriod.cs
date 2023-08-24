@@ -4,7 +4,7 @@ namespace ComfortCare.Data.Interfaces
 {
     public interface IPeriod
     {
-        public List<RouteEntity> CreatePeriod(int days, int numberOfAssignments);
+        public void CreatePeriod(int days, int numberOfAssignments);
 
         //public List<EmployeeEntity> CreateEmployeeRoutes(int employeeID);
 

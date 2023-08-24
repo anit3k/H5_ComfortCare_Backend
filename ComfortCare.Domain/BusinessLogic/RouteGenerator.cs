@@ -110,7 +110,7 @@ namespace ComfortCare.Domain.BusinessLogic
                         }
                     }
 
-                    plannedRoutes.Add(new RouteEntity() { RouteGuid = Guid.NewGuid(), Assignments = route });
+                    plannedRoutes.Add(new RouteEntity() { RouteGuid = Guid.NewGuid(), Assignments = route, RouteDate = currentDay });
                     availableAssignments.Remove(startAssignment);
                     foreach (var assignmentToRemove in assignmentsToRemove)
                     {
@@ -119,7 +119,7 @@ namespace ComfortCare.Domain.BusinessLogic
 
                 }
 
-                currentDay = currentDay.AddDays(i);
+                currentDay = currentDay.AddDays(i+1);
             }
 
             return plannedRoutes;
