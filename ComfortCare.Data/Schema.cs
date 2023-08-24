@@ -1,4 +1,5 @@
-﻿using ComfortCare.Data.Models;
+﻿using ComfortCare.Data.Interfaces;
+using ComfortCare.Data.Models;
 
 namespace ComfortCare.Data
 {

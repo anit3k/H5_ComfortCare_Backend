@@ -15,17 +15,16 @@ namespace ComfortCare.Domain.BusinessLogic
 
         #region Fields
         private readonly IEmployeesRepo _employeesRepo;
-        private readonly IRouteConstructionRepo _routeRepo;
+
         #endregion
 
 
 
 
         #region Constructor 
-        public SchemaGenerator(IEmployeesRepo employeesRepo, IRouteConstructionRepo routeRepo)
+        public SchemaGenerator(IEmployeesRepo employeesRepo)
         {
             _employeesRepo = employeesRepo;
-            _routeRepo = routeRepo;
         }
         #endregion
 
@@ -42,7 +41,7 @@ namespace ComfortCare.Domain.BusinessLogic
         #region Methods
 
 
-        public List<EmployeeEntity> GenerateSchema(List<RouteEntity> routes)
+        public void GenerateSchema(List<RouteEntity> routes)
         {
             // Split routes into two categories based on total time
             var splitRoutes = SplitRoutesByTime(routes);
@@ -52,7 +51,9 @@ namespace ComfortCare.Domain.BusinessLogic
             var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
 
             // Assign routes to employees based on their working hours
-            return AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
+            var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
+
+            _employeesRepo.AddEmployeesToRoute(result);
         }
 
         private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
@@ -89,8 +90,8 @@ namespace ComfortCare.Domain.BusinessLogic
             return employeesNeededForTheRoutes;
         }
 
-        private void AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, List<EmployeeEntity> employeesNeededForTheRoutes)
-        {
+        private List<EmployeeEntity> AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, List<EmployeeEntity> employeesNeededForTheRoutes)
+        {            
             foreach (var employee in employees)
             {
                 if (routes.Count > 0)
@@ -100,6 +101,7 @@ namespace ComfortCare.Domain.BusinessLogic
                 }
                 employeesNeededForTheRoutes.Add(employee);
             }
+            return employeesNeededForTheRoutes;
         }
 
 

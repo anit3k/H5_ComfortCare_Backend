@@ -28,7 +28,7 @@ builder.Services.AddTransient<IRouteConstructionRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<ISchema, Schema>();
-builder.Services.AddTransient<IStatementPeriod, StatementPeriod>();
+builder.Services.AddTransient<IPeriod, Period>();
 
 var _allowAllOriginsForDevelopment = "_allowAllOriginsForDevelopment";
 builder.Services.AddCors(options =>

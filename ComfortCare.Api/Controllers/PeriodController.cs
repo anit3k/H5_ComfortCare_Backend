@@ -13,11 +13,11 @@ namespace ComfortCare.Api.Controllers
     public class PeriodController : ControllerBase
     {
         #region fields
-        private readonly IStatementPeriod _comfortCareSmartPlanner;
+        private readonly IPeriod _comfortCareSmartPlanner;
         #endregion
 
         #region Constructor
-        public PeriodController(IStatementPeriod smartPlanner)
+        public PeriodController(IPeriod smartPlanner)
         {
             _comfortCareSmartPlanner = smartPlanner;
         }
@@ -27,38 +27,38 @@ namespace ComfortCare.Api.Controllers
         [HttpPost("CalculatePeriod")]
         public IActionResult CalculatePeriod(PeriodDto periodDto) 
         {
-            var result = _comfortCareSmartPlanner.CreateStatementPeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
+            var result = _comfortCareSmartPlanner.CreatePeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
             return Ok(result);
         }
 
-        [HttpPost("GetRoutesForEmployee")]
-        public IActionResult GetRoutesForEmployee(EmployeeDto employeeDto)
-        {
-            var result = _comfortCareSmartPlanner.CreateEmployeeRoutes(employeeDto.EmployeeID);
-            EmployeeScheduleDto employeeScheduleDto = new EmployeeScheduleDto();
-            employeeScheduleDto.Name = "john "+employeeDto.EmployeeID;
-            employeeScheduleDto.Assignments = new System.Collections.Generic.List<AssignmentDTO>();
-            foreach (var item in result)
-            {
-                AssignmentDTO assignmentDTO = new AssignmentDTO();
-                assignmentDTO.Address = "NA";
-                assignmentDTO.CitizenName = "NA";
-                assignmentDTO.Description = "NA";
-                assignmentDTO.EndDate = item.Route.Assignments[0].TimeWindowStart.AddSeconds((int)item.Route.Assignments[0].Duration);
-                assignmentDTO.StartDate = item.Route.Assignments[0].TimeWindowStart;
-                assignmentDTO.TimeSpan = (int)item.Route.Assignments[0].Duration;
-                assignmentDTO.Titel = "NA";
-                employeeScheduleDto.Assignments.Add(assignmentDTO);
-            }
-            return Ok(employeeScheduleDto);
-        }
+        //[HttpPost("GetRoutesForEmployee")]
+        //public IActionResult GetRoutesForEmployee(EmployeeDto employeeDto)
+        //{
+        //    var result = _comfortCareSmartPlanner.CreateEmployeeRoutes(employeeDto.EmployeeID);
+        //    EmployeeScheduleDto employeeScheduleDto = new EmployeeScheduleDto();
+        //    employeeScheduleDto.Name = "john "+employeeDto.EmployeeID;
+        //    employeeScheduleDto.Assignments = new System.Collections.Generic.List<AssignmentDTO>();
+        //    foreach (var item in result)
+        //    {
+        //        AssignmentDTO assignmentDTO = new AssignmentDTO();
+        //        assignmentDTO.Address = "NA";
+        //        assignmentDTO.CitizenName = "NA";
+        //        assignmentDTO.Description = "NA";
+        //        assignmentDTO.EndDate = item.Route.Assignments[0].TimeWindowStart.AddSeconds((int)item.Route.Assignments[0].Duration);
+        //        assignmentDTO.StartDate = item.Route.Assignments[0].TimeWindowStart;
+        //        assignmentDTO.TimeSpan = (int)item.Route.Assignments[0].Duration;
+        //        assignmentDTO.Titel = "NA";
+        //        employeeScheduleDto.Assignments.Add(assignmentDTO);
+        //    }
+        //    return Ok(employeeScheduleDto);
+        //}
 
-        [HttpPost("WipeAllRoutes")]
-        public IActionResult WipeAllRoutes()
-        {
-            _comfortCareSmartPlanner.WipeAllRoutes();
-            return Ok();
-        }
+        //[HttpPost("WipeAllRoutes")]
+        //public IActionResult WipeAllRoutes()
+        //{
+        //    _comfortCareSmartPlanner.WipeAllRoutes();
+        //    return Ok();
+        //}
 
         
 
