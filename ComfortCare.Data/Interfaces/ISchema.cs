@@ -7,6 +7,6 @@ namespace ComfortCare.Data.Interfaces
     /// </summary>
     public interface ISchema
     {
-        Tuple<string, List<Assignment>> CurrentSchema(string employeeInitials, string employeePassword);
+        Tuple<string, List<Tuple<Assignment, DateTime>>> CurrentSchema(string employeeInitials, string employeePassword);
     }
 }

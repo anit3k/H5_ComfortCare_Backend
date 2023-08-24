@@ -52,17 +52,20 @@ namespace ComfortCare.Api.Controllers
 
                     employeeDto.Name = result.Item1;
                     
+                    employeeDto.Assignments = new List<AssignmentDTO>();
 
                     foreach (var item in result.Item2) 
                     {
                         AssignmentDTO assignmentDto = new AssignmentDTO();
-                        assignmentDto.Titel = item.AssignmentType.Title;
-                        assignmentDto.Description = item.AssignmentType.AssignmentTypeDescription;
-                        assignmentDto.StartDate = item.RouteAssignment.;
-                        assignmentDto.Address = item.Citizen.Residence.CitizenResidence;
+                        assignmentDto.Titel = item.Item1.AssignmentType.Title;
+                        assignmentDto.Description = item.Item1.AssignmentType.AssignmentTypeDescription;
+                        assignmentDto.CitizenName = item.Item1.Citizen.CitizenName;
+                        assignmentDto.StartDate = item.Item2;
+                        assignmentDto.Address = item.Item1.Citizen.Residence.CitizenResidence;
+                        employeeDto.Assignments.Add(assignmentDto);
                     }
 
-                    return StatusCode(200, new EmployeeScheduleDto() { });
+                    return StatusCode(200, employeeDto);
                 }
             }
             catch (Exception)
