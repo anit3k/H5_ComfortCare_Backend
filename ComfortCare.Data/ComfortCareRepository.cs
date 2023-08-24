@@ -2,6 +2,8 @@
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using System.Collections.Generic;
 
 namespace ComfortCare.Data
 {
@@ -138,7 +140,7 @@ namespace ComfortCare.Data
             _context.SaveChanges();
         }
 
-        public Tuple<string, List<Assignment>> GetSchemas(string employeeInitials, string employeePassword)
+        public Tuple<string, List<Tuple<Assignment, DateTime>>> GetSchemas(string employeeInitials, string employeePassword)
         {
             var employee = _context.Employee
                 .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
@@ -158,21 +160,19 @@ namespace ComfortCare.Data
                 .Select(ra => ra.Assignment)
                 .ToList();
 
-            // Now fetch the ArrivalTime for each Assignment
+            List<Tuple<Assignment, DateTime>> assignmentTuples = new List<Tuple<Assignment, DateTime>>();
             foreach (var assignment in assignments)
             {
                 var routeAssignment = _context.RouteAssignment
                     .FirstOrDefault(ra => ra.AssignmentId == assignment.Id);
 
-                if (routeAssignment != null)
-                {
-                    assignment.RouteAssignment.Add(routeAssignment);
-                }
-            }
+                var tuple = Tuple.Create(assignment, routeAssignment.ArrivalTime);
+                assignmentTuples.Add(tuple);
+            }         
 
             var employeeName = employee.EmployeeName;
             var list = new List<Assignment>();
-            return Tuple.Create(employeeName, assignments);
+            return Tuple.Create(employeeName, assignmentTuples);
         }
 
         #endregion
