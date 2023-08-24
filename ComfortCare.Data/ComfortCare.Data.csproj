@@ -14,4 +14,8 @@
     <ProjectReference Include="..\ComfortCare.Domain\ComfortCare.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

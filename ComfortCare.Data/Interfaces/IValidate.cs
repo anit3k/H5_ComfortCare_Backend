@@ -1,4 +1,4 @@
-﻿namespace ComfortCare.Data
+﻿namespace ComfortCare.Data.Interfaces
 {
     /// <summary>
     /// This interface is used to validate if the current user exist in the database

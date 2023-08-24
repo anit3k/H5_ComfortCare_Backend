@@ -1,18 +1,19 @@
-﻿using ComfortCare.Data.Models;
+﻿using ComfortCare.Data.Interfaces;
+using ComfortCare.Data.Models;
 
 namespace ComfortCare.Data
 {
     /// <summary>
     /// This class is used to get the schema for the active user/employee
     /// </summary>
-    public class GetSchema : IGetSchema
+    public class Schema : ISchema
     {
         #region fields
         private readonly ComfortCareDbContext _context;
         #endregion
 
         #region Constructor
-        public GetSchema(ComfortCareDbContext context)
+        public Schema(ComfortCareDbContext context)
         {
             _context = context;
         }

@@ -5,13 +5,14 @@ using System.Collections.Generic;
 
 namespace ComfortCare.Data.Models
 {
-    public partial class EmployeeEmployeeRoute
+    public partial class RouteAssignment
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
+        public int AssignmentId { get; set; }
+        public DateTime ArrivalTime { get; set; }
         public int EmployeeRouteId { get; set; }
 
-        public virtual Employee Employee { get; set; }
+        public virtual Assignment Assignment { get; set; }
         public virtual EmployeeRoute EmployeeRoute { get; set; }
     }
 }
