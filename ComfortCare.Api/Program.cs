@@ -23,6 +23,7 @@ builder.Services.AddTransient<RouteGenerator>();
 builder.Services.AddTransient<SchemaGenerator>();
 builder.Services.AddTransient<IPlanManager, PlanManager>();
 builder.Services.AddTransient<IRouteRepo, ComfortCareRepository>();
+builder.Services.AddTransient<ComfortCareRepository>();
 builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IValidate, Validate>();
 builder.Services.AddTransient<ISchema, Schema>();

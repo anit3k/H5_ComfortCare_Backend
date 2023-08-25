@@ -2,6 +2,8 @@
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using System.Collections.Generic;
 
 namespace ComfortCare.Data
 {
@@ -106,7 +108,7 @@ namespace ComfortCare.Data
 
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
-           
+
             // Loop through all employees adding their routes to the database
             foreach (var employee in employees)
             {
@@ -136,6 +138,41 @@ namespace ComfortCare.Data
             }
             // Saving changes to Database
             _context.SaveChanges();
+        }
+
+        public Tuple<string, List<Tuple<Assignment, DateTime>>> GetSchemas(string employeeInitials, string employeePassword)
+        {
+            var employee = _context.Employee
+                .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
+
+            List<EmployeeRoute> employeeRoutes = _context.EmployeeRoute
+                .Where(er => er.EmployeeId == employee.Id)
+                .ToList();
+
+            List<int> employeeRouteIds = employeeRoutes.Select(er => er.Id).ToList();
+
+            List<Assignment> assignments = _context.RouteAssignment
+                .Where(ra => employeeRouteIds.Contains(ra.EmployeeRouteId))
+                .Include(ra => ra.Assignment.AssignmentType)
+                .Include(ra => ra.Assignment.Citizen)
+                    .ThenInclude(re => re.Residence)
+                .Include(ra => ra.Assignment.RouteAssignment)
+                .Select(ra => ra.Assignment)
+                .ToList();
+
+            List<Tuple<Assignment, DateTime>> assignmentTuples = new List<Tuple<Assignment, DateTime>>();
+            foreach (var assignment in assignments)
+            {
+                var routeAssignment = _context.RouteAssignment
+                    .FirstOrDefault(ra => ra.AssignmentId == assignment.Id);
+
+                var tuple = Tuple.Create(assignment, routeAssignment.ArrivalTime);
+                assignmentTuples.Add(tuple);
+            }         
+
+            var employeeName = employee.EmployeeName;
+            var list = new List<Assignment>();
+            return Tuple.Create(employeeName, assignmentTuples);
         }
 
         #endregion

@@ -9,13 +9,13 @@ namespace ComfortCare.Data
     public class Schema : ISchema
     {
         #region fields
-        private readonly ComfortCareDbContext _context;
+        private readonly ComfortCareRepository _repository;
         #endregion
 
         #region Constructor
-        public Schema(ComfortCareDbContext context)
+        public Schema(ComfortCareRepository repo)
         {
-            _context = context;
+            _repository = repo;
         }
         #endregion
 
@@ -26,10 +26,17 @@ namespace ComfortCare.Data
         /// <param name="employee">Current/active user</param>
         /// <returns>A schema that contains the route for the active user</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public EmployeeRoute CurrentSchema(Employee employee)
+        public Tuple<string, List<Tuple<Assignment, DateTime>>> CurrentSchema(string userInitials, string userPassword)
         {
-            // TODO: implement logic to get employee schema from database
-            throw new NotImplementedException();
+            try
+            {
+               return _repository.GetSchemas(userInitials, userPassword);
+            }
+            catch (Exception)
+            {
+                throw new NotImplementedException();
+            }
+            
         }
         #endregion
     }

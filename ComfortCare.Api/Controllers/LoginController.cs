@@ -40,14 +40,33 @@ namespace ComfortCare.Api.Controllers
 
             try
             {
-                if (loginResult)
+                if (!loginResult)
                 {
-                    return StatusCode(200, new EmployeeScheduleDto() { });
+                    return StatusCode(400, "Bad request, wrong username or password.");
                 }
                 else
                 {
-                    return StatusCode(400, "Bad request, wrong username or password.");
-                } 
+                    var result = _schema.CurrentSchema(loginDto.Initials, loginDto.Password);
+
+                    EmployeeScheduleDto employeeDto = new EmployeeScheduleDto();
+
+                    employeeDto.Name = result.Item1;
+                    
+                    employeeDto.Assignments = new List<AssignmentDTO>();
+
+                    foreach (var item in result.Item2) 
+                    {
+                        AssignmentDTO assignmentDto = new AssignmentDTO();
+                        assignmentDto.Titel = item.Item1.AssignmentType.Title;
+                        assignmentDto.Description = item.Item1.AssignmentType.AssignmentTypeDescription;
+                        assignmentDto.CitizenName = item.Item1.Citizen.CitizenName;
+                        assignmentDto.StartDate = item.Item2;
+                        assignmentDto.Address = item.Item1.Citizen.Residence.CitizenResidence;
+                        employeeDto.Assignments.Add(assignmentDto);
+                    }
+
+                    return StatusCode(200, employeeDto);
+                }
             }
             catch (Exception)
             {
