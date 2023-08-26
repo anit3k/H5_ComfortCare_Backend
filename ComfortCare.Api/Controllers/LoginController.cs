@@ -1,5 +1,5 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Data.Interfaces;
+using ComfortCare.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComfortCare.Api.Controllers
@@ -13,15 +13,13 @@ namespace ComfortCare.Api.Controllers
     public class LoginController : ControllerBase
     {
         #region fields
-        private readonly IValidate _validator;
-        private readonly ISchema _schema;
+        private readonly IUserService _userService;
         #endregion
 
         #region Constructor
-        public LoginController(IValidate validator, ISchema schema)
+        public LoginController(IUserService userService)
         {
-            _validator = validator;
-            _schema = schema;
+            _userService = userService;
         }
         #endregion
 
@@ -36,7 +34,7 @@ namespace ComfortCare.Api.Controllers
         public IActionResult EmployeeLogin(LoginDto loginDto)
         {
             // TODO: get and return schedule for user
-            var loginResult = _validator.ValidateUser(loginDto.Initials, loginDto.Password);
+            var loginResult = _userService.ValidateUser(loginDto.Initials, loginDto.Password);
 
             try
             {
@@ -46,7 +44,7 @@ namespace ComfortCare.Api.Controllers
                 }
                 else
                 {
-                    var result = _schema.CurrentSchema(loginDto.Initials, loginDto.Password);
+                    var result = _userService.GetEmployeeSchema(loginDto.Initials, loginDto.Password);
 
                     EmployeeScheduleDto employeeDto = new EmployeeScheduleDto();
                     if (result != null)
@@ -74,13 +72,9 @@ namespace ComfortCare.Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Service unavailable. No internet available.");
+                return StatusCode(500, "Internal Server Error, please contact your administrator if this continues");
             }
         }
-        #endregion
-
-        #region Methods
-
         #endregion
     }
 }

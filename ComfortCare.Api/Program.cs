@@ -2,6 +2,8 @@ using ComfortCare.Data;
 using ComfortCare.Data.Interfaces;
 using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Domain.BusinessLogic.interfaces;
+using ComfortCare.Service;
+using ComfortCare.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,11 +25,9 @@ builder.Services.AddTransient<RouteGenerator>();
 builder.Services.AddTransient<SchemaGenerator>();
 builder.Services.AddTransient<IPlanManager, PlanManager>();
 builder.Services.AddTransient<IRouteRepo, ComfortCareRepository>();
-builder.Services.AddTransient<ComfortCareRepository>();
 builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
-builder.Services.AddTransient<IValidate, Validate>();
-builder.Services.AddTransient<ISchema, Schema>();
-builder.Services.AddTransient<IPeriod, Period>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IUserRepo, ComfortCareRepository>();
 
 var _allowAllOriginsForDevelopment = "_allowAllOriginsForDevelopment";
 builder.Services.AddCors(options =>
