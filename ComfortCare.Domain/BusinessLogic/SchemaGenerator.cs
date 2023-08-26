@@ -27,6 +27,203 @@ namespace ComfortCare.Domain.BusinessLogic
 
 
 
+
+        //public void GenerateSchema(List<RouteEntity> routes)
+        //{
+        //    // Group routes by week
+        //    var groups = routes.GroupBy(r => r.RouteDate.Date.AddDays(-(int)r.RouteDate.DayOfWeek + (int)DayOfWeek.Monday))
+        //                       .Select(group => group.ToList())
+        //                       .ToList();
+
+        //    foreach (var group in groups)
+        //    {
+        //        var splitRoutes = SplitRoutesByTime(group);
+
+        //        // Fetch employees based on their work hours
+        //        var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
+        //        var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
+        //        var employeesSubstitutes = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours > 40).ToList();
+
+        //        // Reset work hours for the current week
+        //        employeesFullTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+        //        employeesPartTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+        //        employeesSubstitutes.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+
+        //        // Update four-week work hours history
+        //        UpdateFourWeekWorkHours(employeesFullTime);
+        //        UpdateFourWeekWorkHours(employeesPartTime);
+        //        UpdateFourWeekWorkHours(employeesSubstitutes);
+
+        //        // Assign routes to employees
+        //        var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime, employeesSubstitutes);
+
+        //        _employeesRepo.AddEmployeesToRoute(result);
+        //    }
+        //}
+
+        //private void UpdateFourWeekWorkHours(List<EmployeeEntity> employees)
+        //{
+        //    // Update the work hours history for the past four weeks
+        //    foreach (var employee in employees)
+        //    {
+        //        if (employee.PastFourWeeksWorkHoursInSeconds.Count >= 4)
+        //        {
+        //            employee.PastFourWeeksWorkHoursInSeconds.Dequeue();
+        //        }
+        //        employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
+        //    }
+        //}
+
+        //private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
+        //{
+        //    // Split routes into long and short based on their duration
+        //    var longRoutes = new List<RouteEntity>();
+        //    var shortRoutes = new List<RouteEntity>();
+
+        //    foreach (RouteEntity routeEntity in routes)
+        //    {
+        //        var totalTime = routeEntity.Assignments.Last().ArrivalTime - routeEntity.Assignments.First().ArrivalTime;
+        //        if (totalTime > TimeSpan.FromHours(5))
+        //        {
+        //            longRoutes.Add(routeEntity);
+        //        }
+        //        else
+        //        {
+        //            shortRoutes.Add(routeEntity);
+        //        }
+        //    }
+
+        //    return new List<List<RouteEntity>> { longRoutes, shortRoutes };
+        //}
+
+        //private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime, List<EmployeeEntity> employeesSubstitutes)
+        //{
+        //    // Assign routes to employees based on their availability and type
+        //    var employeesNeededForTheRoutes = new List<EmployeeEntity>();
+
+        //    AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime, 55);
+        //    AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime, 55);
+        //    AssignRoutesToSpecificEmployees(splitRoutes[0], employeesSubstitutes, 0);
+        //    AssignRoutesToSpecificEmployees(splitRoutes[1], employeesSubstitutes, 0);
+
+        //    employeesNeededForTheRoutes.AddRange(employeesFullTime);
+        //    employeesNeededForTheRoutes.AddRange(employeesPartTime);
+        //    employeesNeededForTheRoutes.AddRange(employeesSubstitutes);
+
+        //    return employeesNeededForTheRoutes;
+        //}
+
+        //private void AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, int minFreeHours)
+        //{
+        //    while (routes.Count > 0)
+        //    {
+        //        bool routeAssigned = false;
+
+        //        foreach (var employee in employees)
+        //        {
+        //            if (routes.Count > 0)
+        //            {
+        //                var route = routes[0];
+        //                var routeDuration = CalculateRouteDuration(route);
+        //                var routeDay = route.RouteDate.Date;
+        //                var routeStartTime = route.Assignments.First().ArrivalTime;
+        //                var routeEndTime = route.Assignments.Last().ArrivalTime.AddSeconds(routeDuration);
+
+        //                if (!employee.WorkHoursPerDayInSeconds.ContainsKey(routeDay))
+        //                {
+        //                    employee.WorkHoursPerDayInSeconds[routeDay] = 0;
+        //                    employee.WorkBlocksPerDay[routeDay] = new List<(TimeSpan, TimeSpan)>();
+        //                }
+
+        //                double fourWeekAverage = (employee.PastFourWeeksWorkHoursInSeconds.Sum() + routeDuration) / (employee.PastFourWeeksWorkHoursInSeconds.Count + 1);
+
+        //                int maxWorkHoursPerWeekInSeconds = employee.Weeklyworkhours * 60 * 60;
+
+        //                // Check for 55-hour continuous free time
+        //                bool hasEnoughFreeTime = CheckForContinuousFreeTime(employee.WorkBlocksPerDay, minFreeHours);
+
+        //                if (employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= maxWorkHoursPerWeekInSeconds &&
+        //                    fourWeekAverage <= maxWorkHoursPerWeekInSeconds &&
+        //                    employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60 &&
+        //                    hasEnoughFreeTime)
+        //                {
+        //                    employee.Routes.Add(route);
+        //                    employee.WorkhoursWithincurentWeekInSeconds += routeDuration;
+        //                    employee.WorkHoursPerDayInSeconds[routeDay] += routeDuration;
+        //                    employee.WorkBlocksPerDay[routeDay].Add((routeStartTime.TimeOfDay, routeEndTime.TimeOfDay));
+
+        //                    routes.RemoveAt(0);
+        //                    routeAssigned = true;
+        //                }
+        //            }
+        //        }
+
+        //        if (!routeAssigned)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //}
+
+
+        //private bool CheckForContinuousFreeTime(Dictionary<DateTime, List<(TimeSpan Start, TimeSpan End)>> workBlocksPerDay, int minFreeHours)
+        //{
+        //    // Sort work blocks and check for continuous free time
+        //    foreach (var day in workBlocksPerDay.Keys)
+        //    {
+        //        var workBlocks = workBlocksPerDay[day];
+        //        workBlocks.Sort((a, b) => a.Start.CompareTo(b.Start));
+
+        //        TimeSpan lastEndTime = TimeSpan.Zero;
+
+        //        foreach (var block in workBlocks)
+        //        {
+        //            var freeTime = block.Start - lastEndTime;
+        //            if (freeTime.TotalHours >= minFreeHours)
+        //            {
+        //                return true;
+        //            }
+        //            lastEndTime = block.End;
+        //        }
+
+        //        // Check free time after the last work block until midnight
+        //        var remainingTime = TimeSpan.FromHours(24) - lastEndTime;
+        //        if (remainingTime.TotalHours >= minFreeHours)
+        //        {
+        //            return true;
+        //        }
+        //    }
+
+        //    return false;
+        //}
+
+
+        //private double CalculateRouteDuration(RouteEntity route)
+        //{
+        //    // Calculate the total duration of the route based on the assignments
+        //    return route.Assignments.Sum(a => a.Duration);
+        //}
+
+
+
+
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
         public void GenerateSchema(List<RouteEntity> routes)
         {
             var groups = routes.GroupBy(r => r.RouteDate.Date.AddDays(-(int)r.RouteDate.DayOfWeek + (int)DayOfWeek.Monday)).Select(group => group.ToList()).ToList();
@@ -161,6 +358,24 @@ namespace ComfortCare.Domain.BusinessLogic
             // Calculate the total duration of the route based on the assignments
             return route.Assignments.Sum(a => a.Duration);
         }
+
+
+
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
         //public void GenerateSchema(List<RouteEntity> routes)
         //{
