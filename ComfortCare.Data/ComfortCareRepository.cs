@@ -140,75 +140,47 @@ namespace ComfortCare.Data
             _context.SaveChanges();
         }
 
-
-        //public void AddEmployeesToRoute(List<EmployeeEntity> employees)
-        //{
-
-        //    // Loop through all employees adding their routes to the database
-        //    foreach (var employee in employees)
-        //    {
-        //        var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
-
-        //        var employeeRoute = new EmployeeRoute()
-        //        {
-        //            Employee = employeeQuery,
-        //        };
-
-        //        _context.EmployeeRoute.Add(employeeRoute);//Added this to ensure the employeeRoute gets an Id before moving on to RouteAssignment
-        //        foreach (var assignment in employee.Route.Assignments)
-        //        {
-
-        //            var employeeAssignment = new RouteAssignment()
-        //            {
-        //                EmployeeRoute = employeeRoute,
-        //                Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
-        //                ArrivalTime = assignment.ArrivalTime
-        //            };
-
-        //            employeeRoute.RouteAssignment.Add(employeeAssignment);
-        //            //_context.RouteAssignment.Add(employeeAssignment);
-        //        }
-        //        _context.EmployeeRoute.Add(employeeRoute);
-        //    }
-        //    // Saving changes to Database
-        //    _context.SaveChanges();
-        //}
-
-
-        public Tuple<string, List<Tuple<Assignment, DateTime>>> GetSchemas(string employeeInitials, string employeePassword)
+        public EmployeeSchemaModel GetSchema(string employeeInitials, string employeePassword)
         {
             var employee = _context.Employee
-                .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
+            .Include(e => e.EmployeeRoute)
+                .ThenInclude(route => route.RouteAssignment)
+                    .ThenInclude(routeAssignment => routeAssignment.Assignment)
+                        .ThenInclude(assignment => assignment.AssignmentType)
+            .Include(e => e.EmployeeRoute)
+                .ThenInclude(route => route.RouteAssignment)
+                    .ThenInclude(routeAssignment => routeAssignment.Assignment)
+                        .ThenInclude(assignment => assignment.Citizen)
+                            .ThenInclude(citizen => citizen.Residence)
+            .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
 
-            List<EmployeeRoute> employeeRoutes = _context.EmployeeRoute
-                .Where(er => er.EmployeeId == employee.Id)
-                .ToList();
 
-            List<int> employeeRouteIds = employeeRoutes.Select(er => er.Id).ToList();
-
-            List<Assignment> assignments = _context.RouteAssignment
-                .Where(ra => employeeRouteIds.Contains(ra.EmployeeRouteId))
-                .Include(ra => ra.Assignment.AssignmentType)
-                .Include(ra => ra.Assignment.Citizen)
-                    .ThenInclude(re => re.Residence)
-                .Include(ra => ra.Assignment.RouteAssignment)
-                .Select(ra => ra.Assignment)
-                .ToList();
-
-            List<Tuple<Assignment, DateTime>> assignmentTuples = new List<Tuple<Assignment, DateTime>>();
-            foreach (var assignment in assignments)
+            if (employee == null)
             {
-                var routeAssignment = _context.RouteAssignment
-                    .FirstOrDefault(ra => ra.AssignmentId == assignment.Id);
+                return null;
+            }
 
-                var tuple = Tuple.Create(assignment, routeAssignment.ArrivalTime);
-                assignmentTuples.Add(tuple);
-            }         
+            var assignmentsData = employee.EmployeeRoute
+                .SelectMany(route => route.RouteAssignment)
+                .Select(routeAssignment => new AssignmentModel
+                {
+                    Title = routeAssignment.Assignment.AssignmentType.Title,
+                    AssignmentTypeDescription = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
+                    Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
+                    CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
+                    StartDate = routeAssignment.ArrivalTime,
+                    Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence
+                }).ToList();
 
-            var employeeName = employee.EmployeeName;
-            var list = new List<Assignment>();
-            return Tuple.Create(employeeName, assignmentTuples);
+            var employeeSchema = new EmployeeSchemaModel
+            {
+                Name = employee.EmployeeName,
+                Assignments = assignmentsData
+            };
+
+            return employeeSchema;
         }
+
 
         #endregion
     }
