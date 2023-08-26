@@ -1,4 +1,4 @@
-﻿namespace ComfortCare.Data
+﻿namespace ComfortCare.Data.Models
 {
     public class EmployeeSchemaModel
     {

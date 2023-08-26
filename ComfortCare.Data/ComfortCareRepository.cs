@@ -1,9 +1,8 @@
-﻿using ComfortCare.Data.Models;
+﻿using ComfortCare.Data.Interfaces;
+using ComfortCare.Data.Models;
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using System.Collections.Generic;
 
 namespace ComfortCare.Data
 {
@@ -11,7 +10,7 @@ namespace ComfortCare.Data
     /// This repository is used by the planmanager to read information from database and save routes calculated for a 
     /// statement period
     /// </summary>
-    public class ComfortCareRepository : IRouteRepo, IEmployeesRepo
+    public class ComfortCareRepository : IRouteRepo, IEmployeesRepo, IUserRepo
     {
         #region fields
         private readonly ComfortCareDbContext _context;
@@ -138,9 +137,23 @@ namespace ComfortCare.Data
                 }
             }
             _context.SaveChanges();
+        }     
+
+        public bool ValidateUserExist(string username, string password)
+        {
+            var employeeMatchingUserInput = _context.Employee.Where(e => e.Initials == username && e.EmployeePassword == password).ToList();
+
+            if (employeeMatchingUserInput.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        public EmployeeSchemaModel GetSchema(string employeeInitials, string employeePassword)
+        public EmployeeSchemaModel GetUsersWorkSchedule(string username, string password)
         {
             var employee = _context.Employee
             .Include(e => e.EmployeeRoute)
@@ -152,7 +165,7 @@ namespace ComfortCare.Data
                     .ThenInclude(routeAssignment => routeAssignment.Assignment)
                         .ThenInclude(assignment => assignment.Citizen)
                             .ThenInclude(citizen => citizen.Residence)
-            .FirstOrDefault(e => e.Initials == employeeInitials && e.EmployeePassword == employeePassword);
+            .FirstOrDefault(e => e.Initials == username && e.EmployeePassword == password);
 
 
             if (employee == null)
@@ -170,7 +183,6 @@ namespace ComfortCare.Data
                     Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
                     CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
                     StartDate = routeAssignment.ArrivalTime,
-                    EndDate = routeAssignment.ArrivalTime.AddSeconds(routeAssignment.Assignment.AssignmentType.DurationInSeconds),
                     Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence
                 }).ToList();
 
@@ -182,8 +194,6 @@ namespace ComfortCare.Data
 
             return employeeSchema;
         }
-
-        
         #endregion
     }
 }
