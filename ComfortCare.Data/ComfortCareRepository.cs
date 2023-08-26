@@ -160,6 +160,7 @@ namespace ComfortCare.Data
                 return null;
             }
 
+
             var assignmentsData = employee.EmployeeRoute
                 .SelectMany(route => route.RouteAssignment)
                 .Select(routeAssignment => new AssignmentModel
@@ -169,6 +170,7 @@ namespace ComfortCare.Data
                     Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
                     CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
                     StartDate = routeAssignment.ArrivalTime,
+                    EndDate = routeAssignment.ArrivalTime.AddSeconds(routeAssignment.Assignment.AssignmentType.DurationInSeconds),
                     Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence
                 }).ToList();
 
@@ -181,7 +183,7 @@ namespace ComfortCare.Data
             return employeeSchema;
         }
 
-
+        
         #endregion
     }
 }
