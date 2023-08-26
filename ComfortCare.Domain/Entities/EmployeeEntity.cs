@@ -21,6 +21,7 @@ namespace ComfortCare.Domain.Entities
         public List<RouteEntity> Routes { get; set; } = new List<RouteEntity>();
         public int SmallestFreeBlockInSeconds { get; set; } = int.MaxValue;  // Initialize to a large value
         public Dictionary<DateTime, List<(TimeSpan Start, TimeSpan End)>> WorkBlocksPerDay { get; set; } = new Dictionary<DateTime, List<(TimeSpan, TimeSpan)>>();  // New property
+
     }
 
 }
