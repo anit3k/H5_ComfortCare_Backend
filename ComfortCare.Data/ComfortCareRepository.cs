@@ -106,39 +106,74 @@ namespace ComfortCare.Data
             return employees;
         }
 
+
+
+        // Modified AddEmployeesToRoute method
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
-
-            // Loop through all employees adding their routes to the database
             foreach (var employee in employees)
             {
                 var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
 
-                var employeeRoute = new EmployeeRoute()
+                foreach (var route in employee.Routes)
                 {
-                    Employee = employeeQuery,
-                };
-
-
-
-                foreach (var assignment in employee.Route.Assignments)
-                {
-
-                    var employeeAssignment = new RouteAssignment()
+                    var employeeRoute = new EmployeeRoute()
                     {
-                        EmployeeRoute = employeeRoute,
-                        Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
-                        ArrivalTime = assignment.ArrivalTime
+                        Employee = employeeQuery,
                     };
 
-                    employeeRoute.RouteAssignment.Add(employeeAssignment);
-                    //_context.RouteAssignment.Add(employeeAssignment);
+                    _context.EmployeeRoute.Add(employeeRoute);
+
+                    foreach (var assignment in route.Assignments)
+                    {
+                        var employeeAssignment = new RouteAssignment()
+                        {
+                            EmployeeRoute = employeeRoute,
+                            Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
+                            ArrivalTime = assignment.ArrivalTime
+                        };
+
+                        employeeRoute.RouteAssignment.Add(employeeAssignment);
+                    }
                 }
-                _context.EmployeeRoute.Add(employeeRoute);
             }
-            // Saving changes to Database
             _context.SaveChanges();
         }
+
+
+        //public void AddEmployeesToRoute(List<EmployeeEntity> employees)
+        //{
+
+        //    // Loop through all employees adding their routes to the database
+        //    foreach (var employee in employees)
+        //    {
+        //        var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
+
+        //        var employeeRoute = new EmployeeRoute()
+        //        {
+        //            Employee = employeeQuery,
+        //        };
+
+        //        _context.EmployeeRoute.Add(employeeRoute);//Added this to ensure the employeeRoute gets an Id before moving on to RouteAssignment
+        //        foreach (var assignment in employee.Route.Assignments)
+        //        {
+
+        //            var employeeAssignment = new RouteAssignment()
+        //            {
+        //                EmployeeRoute = employeeRoute,
+        //                Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
+        //                ArrivalTime = assignment.ArrivalTime
+        //            };
+
+        //            employeeRoute.RouteAssignment.Add(employeeAssignment);
+        //            //_context.RouteAssignment.Add(employeeAssignment);
+        //        }
+        //        _context.EmployeeRoute.Add(employeeRoute);
+        //    }
+        //    // Saving changes to Database
+        //    _context.SaveChanges();
+        //}
+
 
         public Tuple<string, List<Tuple<Assignment, DateTime>>> GetSchemas(string employeeInitials, string employeePassword)
         {

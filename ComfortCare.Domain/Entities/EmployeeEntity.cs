@@ -15,5 +15,11 @@ namespace ComfortCare.Domain.Entities
         public int Weeklyworkhours { get; set; }
         public int EmployeeType { get; set; }
         public RouteEntity Route { get; set; }
+        public double WorkhoursWithincurentWeekInSeconds { get; set; }
+        public Queue<double> PastFourWeeksWorkHoursInSeconds { get; set; } = new Queue<double>();
+        public Dictionary<DateTime, double> WorkHoursPerDayInSeconds { get; set; } = new Dictionary<DateTime, double>();
+        public List<RouteEntity> Routes { get; set; } = new List<RouteEntity>();
+
+
     }
 }
