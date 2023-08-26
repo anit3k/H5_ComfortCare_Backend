@@ -26,11 +26,11 @@ namespace ComfortCare.Data
         /// <param name="employee">Current/active user</param>
         /// <returns>A schema that contains the route for the active user</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Tuple<string, List<Tuple<Assignment, DateTime>>> CurrentSchema(string userInitials, string userPassword)
+        public EmployeeSchemaModel CurrentSchema(string userInitials, string userPassword)
         {
             try
             {
-               return _repository.GetSchemas(userInitials, userPassword);
+               return _repository.GetSchema(userInitials, userPassword);
             }
             catch (Exception)
             {
