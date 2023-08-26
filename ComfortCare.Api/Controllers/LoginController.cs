@@ -61,6 +61,7 @@ namespace ComfortCare.Api.Controllers
                                 Description = assignmentData.Description,
                                 CitizenName = assignmentData.CitizenName,
                                 StartDate = assignmentData.StartDate,
+                                EndDate = assignmentData.EndDate,
                                 Address = assignmentData.Address
                             };
                             employeeDto.Assignments.Add(assignmentDto);

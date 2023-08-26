@@ -23,11 +23,12 @@ builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 
 builder.Services.AddTransient<RouteGenerator>();
 builder.Services.AddTransient<SchemaGenerator>();
-builder.Services.AddTransient<IPlanManager, PlanManager>();
+builder.Services.AddTransient<IPeriodManager, PeriodManager>();
 builder.Services.AddTransient<IRouteRepo, ComfortCareRepository>();
 builder.Services.AddTransient<IEmployeesRepo, ComfortCareRepository>();
-builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserRepo, ComfortCareRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IPeriodService, PeriodService>();
 
 var _allowAllOriginsForDevelopment = "_allowAllOriginsForDevelopment";
 builder.Services.AddCors(options =>

@@ -143,10 +143,9 @@ namespace ComfortCare.Api.Controllers
                         StartDate = startDate.AddHours(random.Number(0, 23)).AddMinutes(random.Number(0, 59)),
                         CitizenName = citizenNames[random.Number(0, citizenNames.Length - 1)],
                         Address = addresses[random.Number(0, addresses.Length - 1)],
-                        TimeSpan = random.Number(600, 1800),
                     };
 
-                    assignment.EndDate = assignment.StartDate.AddSeconds(assignment.TimeSpan);
+                    assignment.EndDate = assignment.StartDate.AddSeconds(1800);
 
                     result.Assignments.Add(assignment);
                 }

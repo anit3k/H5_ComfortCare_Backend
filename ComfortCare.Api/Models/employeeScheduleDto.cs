@@ -19,7 +19,6 @@
         public DateTime StartDate { get; set; }
         public string CitizenName { get; set; }
         public string Address { get; set; }
-        public int TimeSpan { get; set; }
         public DateTime EndDate { get; set; }
         #endregion
     }
