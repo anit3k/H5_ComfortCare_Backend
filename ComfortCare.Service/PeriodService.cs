@@ -14,8 +14,6 @@ namespace ComfortCare.Service
         public void CreatePeriod(int days, int numberOfAssignments)
         {
             _manager.CalculateNewPeriod(days, numberOfAssignments);
-        }
-
-      
+        }      
     }
 }

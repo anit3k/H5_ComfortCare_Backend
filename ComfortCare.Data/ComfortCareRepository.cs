@@ -153,7 +153,7 @@ namespace ComfortCare.Data
             }
         }
 
-        public EmployeeSchemaModel GetUsersWorkSchedule(string username, string password)
+        public Employee GetUsersWorkSchedule(string username, string password)
         {
             var employee = _context.Employee
             .Include(e => e.EmployeeRoute)
@@ -167,32 +167,7 @@ namespace ComfortCare.Data
                             .ThenInclude(citizen => citizen.Residence)
             .FirstOrDefault(e => e.Initials == username && e.EmployeePassword == password);
 
-
-            if (employee == null)
-            {
-                return null;
-            }
-
-
-            var assignmentsData = employee.EmployeeRoute
-                .SelectMany(route => route.RouteAssignment)
-                .Select(routeAssignment => new AssignmentModel
-                {
-                    Title = routeAssignment.Assignment.AssignmentType.Title,
-                    AssignmentTypeDescription = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
-                    Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
-                    CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
-                    StartDate = routeAssignment.ArrivalTime,
-                    Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence
-                }).ToList();
-
-            var employeeSchema = new EmployeeSchemaModel
-            {
-                Name = employee.EmployeeName,
-                Assignments = assignmentsData
-            };
-
-            return employeeSchema;
+            return employee;            
         }
         #endregion
     }

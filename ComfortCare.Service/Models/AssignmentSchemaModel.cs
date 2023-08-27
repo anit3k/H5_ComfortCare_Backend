@@ -1,12 +1,6 @@
-﻿namespace ComfortCare.Data.Models
+﻿namespace ComfortCare.Service.Models
 {
-    public class EmployeeSchemaModel
-    {
-        public string Name { get; set; }
-        public List<AssignmentModel> Assignments { get; set; }
-    }
-
-    public class AssignmentModel
+    public class AssignmentSchemaModel
     {
         public string Title { get; set; }
         public string AssignmentTypeDescription { get; set; }
