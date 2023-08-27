@@ -25,7 +25,8 @@ namespace ComfortCare.Service
                     Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
                     CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
                     StartDate = routeAssignment.ArrivalTime,
-                    Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence
+                    EndDate = routeAssignment.ArrivalTime.AddSeconds(Convert.ToDouble(routeAssignment.ArrivalTime)),
+                    Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence                    
                 }).ToList();
 
             var employeeSchema = new EmployeeSchemaModel
