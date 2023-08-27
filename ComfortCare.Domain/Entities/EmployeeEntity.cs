@@ -19,7 +19,8 @@ namespace ComfortCare.Domain.Entities
         public Dictionary<DateTime, double> WorkHoursPerDayInSeconds { get; set; } = new Dictionary<DateTime, double>();
         public List<RouteEntity> Routes { get; set; } = new List<RouteEntity>();
         public Dictionary<DateTime, List<(DateTime Start, DateTime End)>> WorkBlocksPerDay { get; set; } = new Dictionary<DateTime, List<(DateTime Start, DateTime End)>>();
-        public DateTime LastWorkedTime { get; set; }
+
+        public List<TimeSpanEntity> WorkingDaysList { get; set; } = new List<TimeSpanEntity>();
 
     }
 

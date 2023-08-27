@@ -43,18 +43,21 @@ namespace ComfortCare.Domain.BusinessLogic
                 var splitRoutes = SplitRoutesByTime(group);
 
                 var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
-                var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
+                var employeesPartTime30Hours = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 30).ToList();
+                var employeesPartTime25Hours = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 25).ToList();
                 var employeesSubstitutes = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours > 40).ToList();
 
                 employeesFullTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
-                employeesPartTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+                employeesPartTime30Hours.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+                employeesPartTime25Hours.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
                 employeesSubstitutes.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
 
                 UpdateFourWeekWorkHours(employeesFullTime);
-                UpdateFourWeekWorkHours(employeesPartTime);
+                UpdateFourWeekWorkHours(employeesPartTime30Hours);
+                UpdateFourWeekWorkHours(employeesPartTime25Hours);
                 UpdateFourWeekWorkHours(employeesSubstitutes);
 
-                var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime, employeesSubstitutes);
+                var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime30Hours, employeesPartTime25Hours, employeesSubstitutes);
 
                 _employeesRepo.AddEmployeesToRoute(result);
             }
@@ -97,19 +100,21 @@ namespace ComfortCare.Domain.BusinessLogic
 
 
         // This method assigns routes to employees based on their type and availability
-        private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime, List<EmployeeEntity> employeesSubstitutes)
+        private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime30Hours, List<EmployeeEntity> employeesPartTime25Hours, List<EmployeeEntity> employeesSubstitutes)
         {
             var employeesNeededForTheRoutes = new List<EmployeeEntity>();
 
             // Assign routes to full-time, part-time, and substitute employees
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime);
-            AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime);
+            AssignRoutesToSpecificEmployees(splitRoutes[0], employeesPartTime30Hours);
+            AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime25Hours);
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesSubstitutes);
             AssignRoutesToSpecificEmployees(splitRoutes[1], employeesSubstitutes);
 
             // Combine all employees who have been assigned routes
             employeesNeededForTheRoutes.AddRange(employeesFullTime);
-            employeesNeededForTheRoutes.AddRange(employeesPartTime);
+            employeesNeededForTheRoutes.AddRange(employeesPartTime30Hours);
+            employeesNeededForTheRoutes.AddRange(employeesPartTime25Hours);
             employeesNeededForTheRoutes.AddRange(employeesSubstitutes);
 
             return employeesNeededForTheRoutes;
@@ -167,28 +172,32 @@ namespace ComfortCare.Domain.BusinessLogic
         }
 
 
-
+        // Calculate the total duration of a route
+        private double CalculateRouteDuration(RouteEntity route)
+        {
+            // Calculate the total duration of the route based on the assignments
+            return route.Assignments.Sum(a => a.Duration);
+        }
 
         // Check if the employee is available to take the route
         private bool IsEmployeeAvailableForRoute(EmployeeEntity employee, double routeDuration, double fourWeekAverage, DateTime routeDay, List<DateTime> assignedDays)
         {
             // Sort the assigned days to check for consecutive days off
-            assignedDays.Sort();
+            //assignedDays.Sort();
 
-            // Check if there are at least two consecutive days off
-            bool hasTwoConsecutiveDaysOff = false;
-            for (int i = 0; i <= 5; i++)
-            {
-                DateTime day = routeDay.Date.AddDays(-i);
-                if (!assignedDays.Contains(day) && !assignedDays.Contains(day.AddDays(-1)))
-                {
-                    hasTwoConsecutiveDaysOff = true;
-                    break;
-                }
-            }
+            //// Check if there are at least two consecutive days off
+            //bool hasTwoConsecutiveDaysOff = false;
+            //for (int i = 0; i <= 5; i++)
+            //{
+            //    DateTime day = routeDay.Date.AddDays(-i);
+            //    if (!assignedDays.Contains(day) && !assignedDays.Contains(day.AddDays(-1)))
+            //    {
+            //        hasTwoConsecutiveDaysOff = true;
+            //        break;
+            //    }
+            //}
 
-            return hasTwoConsecutiveDaysOff &&
-                   employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60 &&
+            return employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60 &&
                    fourWeekAverage <= employee.Weeklyworkhours * 60 * 60 &&
                    employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60;
         }
@@ -214,12 +223,7 @@ namespace ComfortCare.Domain.BusinessLogic
         }
 
 
-        // Calculate the total duration of a route
-        private double CalculateRouteDuration(RouteEntity route)
-        {
-            // Calculate the total duration of the route based on the assignments
-            return route.Assignments.Sum(a => a.Duration);
-        }
+
         #endregion
     }
 }
