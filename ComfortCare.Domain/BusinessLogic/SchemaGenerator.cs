@@ -13,7 +13,6 @@ namespace ComfortCare.Domain.BusinessLogic
         #region Fields
         private readonly IEmployeesRepo _employeesRepo;
 
-        private HashSet<(int EmployeeId, DateTime RouteDay)> _assignedEmployees = new HashSet<(int, DateTime)>();
         #endregion
 
         #region Constructor 
@@ -34,12 +33,9 @@ namespace ComfortCare.Domain.BusinessLogic
             //groups the list of routes by week, where the week starts on Monday.
             var groups = routes.GroupBy(r => r.RouteDate.Date.AddDays(-(int)r.RouteDate.DayOfWeek + (int)DayOfWeek.Monday)).Select(group => group.ToList()).ToList();
 
-
             foreach (var group in groups)
             {
-                // Clear the assigned employees for the new week
-                _assignedEmployees.Clear();
-                //Splitting the routes into long and short routes
+
                 var splitRoutes = SplitRoutesByTime(group);
 
                 var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
@@ -60,6 +56,7 @@ namespace ComfortCare.Domain.BusinessLogic
                 var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime30Hours, employeesPartTime25Hours, employeesSubstitutes);
 
                 _employeesRepo.AddEmployeesToRoute(result);
+
             }
         }
 
@@ -85,14 +82,21 @@ namespace ComfortCare.Domain.BusinessLogic
         }
 
 
+
+
         private void UpdateFourWeekWorkHours(List<EmployeeEntity> employees)
         {
+            // Loop through each employee in the list
             foreach (var employee in employees)
             {
+                // Check if the employee's work hours for the past four weeks are already stored
                 if (employee.PastFourWeeksWorkHoursInSeconds.Count >= 4)
                 {
+                    // Remove the oldest work hours data to make room for the new week
                     employee.PastFourWeeksWorkHoursInSeconds.Dequeue();
                 }
+
+                // Add the current week's work hours to the queue
                 employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
             }
         }
@@ -104,7 +108,7 @@ namespace ComfortCare.Domain.BusinessLogic
         {
             var employeesNeededForTheRoutes = new List<EmployeeEntity>();
 
-            // Assign routes to full-time, part-time, and substitute employees
+            // Assign routes to full-time and part-time 30 hours, part-time 25 hours, and substitute employees
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime);
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesPartTime30Hours);
             AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime25Hours);
@@ -129,6 +133,9 @@ namespace ComfortCare.Domain.BusinessLogic
             while (routes.Any())
             {
                 bool routeAssigned = false;
+
+                // Sort employees by their already assigned work hours to prioritize employees already applied workinghours
+                employees = employees.OrderBy(e => e.WorkhoursWithincurentWeekInSeconds).ToList();
 
                 foreach (var employee in employees)
                 {
@@ -179,27 +186,63 @@ namespace ComfortCare.Domain.BusinessLogic
             return route.Assignments.Sum(a => a.Duration);
         }
 
-        // Check if the employee is available to take the route
+
         private bool IsEmployeeAvailableForRoute(EmployeeEntity employee, double routeDuration, double fourWeekAverage, DateTime routeDay, List<DateTime> assignedDays)
         {
-            // Sort the assigned days to check for consecutive days off
-            //assignedDays.Sort();
+            // Constants
+            const double RequiredHoursOff = 55 * 60 * 60;  // 55 hours converted to seconds
 
-            //// Check if there are at least two consecutive days off
-            //bool hasTwoConsecutiveDaysOff = false;
-            //for (int i = 0; i <= 5; i++)
-            //{
-            //    DateTime day = routeDay.Date.AddDays(-i);
-            //    if (!assignedDays.Contains(day) && !assignedDays.Contains(day.AddDays(-1)))
-            //    {
-            //        hasTwoConsecutiveDaysOff = true;
-            //        break;
-            //    }
-            //}
+            // Check if the employee's work hours for the current week and route duration do not exceed the weekly limit
+            bool withinWeeklyLimit = employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60;
 
-            return employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60 &&
-                   fourWeekAverage <= employee.Weeklyworkhours * 60 * 60 &&
-                   employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60;
+            // Check if the four-week average work hours do not exceed the weekly limit
+            bool withinFourWeekLimit = fourWeekAverage <= employee.Weeklyworkhours * 60 * 60;
+
+            // Check if the employee's work hours for the given day and route duration do not exceed the daily limit of 12 hours
+            bool withinDailyLimit = employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60;
+
+            // Initialize variable to keep track of consecutive free time in seconds
+            double consecutiveFreeTimeInSeconds = 0;
+
+            // Initialize variable to keep track of whether the employee has the required free time
+            bool hasRequiredFreeTime = true;
+
+            // Sort WorkingDaysList by RouteStart
+            employee.WorkingDaysList.Sort((a, b) => a.RouteStart.CompareTo(b.RouteStart));
+
+            // Ensure the list only contains the last 7 days
+            while (employee.WorkingDaysList.Count > 7)
+            {
+                employee.WorkingDaysList.RemoveAt(0);
+            }
+
+            // Initialize variable to keep track of the last work day's end time
+            DateTime lastWorkDayEndTime = DateTime.MinValue;
+
+            // Check for 55 consecutive free hours within the last 7 days
+            foreach (var workDay in employee.WorkingDaysList)
+            {
+                if (lastWorkDayEndTime != DateTime.MinValue)
+                {
+                    var timeDifferenceInSeconds = (workDay.RouteStart - lastWorkDayEndTime).TotalSeconds;
+                    if (timeDifferenceInSeconds > RequiredHoursOff)
+                    {
+                        consecutiveFreeTimeInSeconds = timeDifferenceInSeconds;
+                        break;
+                    }
+                }
+
+                lastWorkDayEndTime = workDay.RouteEnd;
+            }
+            if (employee.WorkingDaysList.Count > 5)
+            {
+                // Check if the employee had 55 consecutive free hours
+                hasRequiredFreeTime = consecutiveFreeTimeInSeconds >= RequiredHoursOff;
+
+            }
+
+            // Return true only if all conditions are met
+            return withinWeeklyLimit && withinFourWeekLimit && withinDailyLimit && hasRequiredFreeTime;
         }
 
 
@@ -219,6 +262,8 @@ namespace ComfortCare.Domain.BusinessLogic
                 employee.WorkBlocksPerDay[routeDay] = new List<(DateTime Start, DateTime End)>();
             }
             employee.WorkBlocksPerDay[routeDay].Add((routeStartTime, routeEndTime));
+            //Adding ruteInformation to the WorkingdayList
+            employee.WorkingDaysList.Add(new TimeSpanEntity { RouteStart = routeStartTime, RouteEnd = routeEndTime });
 
         }
 
