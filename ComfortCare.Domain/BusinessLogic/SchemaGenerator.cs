@@ -12,6 +12,7 @@ namespace ComfortCare.Domain.BusinessLogic
     {
         #region Fields
         private readonly IEmployeesRepo _employeesRepo;
+
         #endregion
 
         #region Constructor 
@@ -21,255 +22,73 @@ namespace ComfortCare.Domain.BusinessLogic
         }
         #endregion
 
-        //TODO: Kent, add logic to ensure that it has been at least 11 hours ago since employ has been working
-        //TODO: Kent - add logic to check for employees who have not worked within other timespan for 48 hours within this period
+
         #region Methods
 
 
 
 
-        //public void GenerateSchema(List<RouteEntity> routes)
-        //{
-        //    // Group routes by week
-        //    var groups = routes.GroupBy(r => r.RouteDate.Date.AddDays(-(int)r.RouteDate.DayOfWeek + (int)DayOfWeek.Monday))
-        //                       .Select(group => group.ToList())
-        //                       .ToList();
-
-        //    foreach (var group in groups)
-        //    {
-        //        var splitRoutes = SplitRoutesByTime(group);
-
-        //        // Fetch employees based on their work hours
-        //        var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
-        //        var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
-        //        var employeesSubstitutes = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours > 40).ToList();
-
-        //        // Reset work hours for the current week
-        //        employeesFullTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
-        //        employeesPartTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
-        //        employeesSubstitutes.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
-
-        //        // Update four-week work hours history
-        //        UpdateFourWeekWorkHours(employeesFullTime);
-        //        UpdateFourWeekWorkHours(employeesPartTime);
-        //        UpdateFourWeekWorkHours(employeesSubstitutes);
-
-        //        // Assign routes to employees
-        //        var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime, employeesSubstitutes);
-
-        //        _employeesRepo.AddEmployeesToRoute(result);
-        //    }
-        //}
-
-        //private void UpdateFourWeekWorkHours(List<EmployeeEntity> employees)
-        //{
-        //    // Update the work hours history for the past four weeks
-        //    foreach (var employee in employees)
-        //    {
-        //        if (employee.PastFourWeeksWorkHoursInSeconds.Count >= 4)
-        //        {
-        //            employee.PastFourWeeksWorkHoursInSeconds.Dequeue();
-        //        }
-        //        employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
-        //    }
-        //}
-
-        //private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
-        //{
-        //    // Split routes into long and short based on their duration
-        //    var longRoutes = new List<RouteEntity>();
-        //    var shortRoutes = new List<RouteEntity>();
-
-        //    foreach (RouteEntity routeEntity in routes)
-        //    {
-        //        var totalTime = routeEntity.Assignments.Last().ArrivalTime - routeEntity.Assignments.First().ArrivalTime;
-        //        if (totalTime > TimeSpan.FromHours(5))
-        //        {
-        //            longRoutes.Add(routeEntity);
-        //        }
-        //        else
-        //        {
-        //            shortRoutes.Add(routeEntity);
-        //        }
-        //    }
-
-        //    return new List<List<RouteEntity>> { longRoutes, shortRoutes };
-        //}
-
-        //private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime, List<EmployeeEntity> employeesSubstitutes)
-        //{
-        //    // Assign routes to employees based on their availability and type
-        //    var employeesNeededForTheRoutes = new List<EmployeeEntity>();
-
-        //    AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime, 55);
-        //    AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime, 55);
-        //    AssignRoutesToSpecificEmployees(splitRoutes[0], employeesSubstitutes, 0);
-        //    AssignRoutesToSpecificEmployees(splitRoutes[1], employeesSubstitutes, 0);
-
-        //    employeesNeededForTheRoutes.AddRange(employeesFullTime);
-        //    employeesNeededForTheRoutes.AddRange(employeesPartTime);
-        //    employeesNeededForTheRoutes.AddRange(employeesSubstitutes);
-
-        //    return employeesNeededForTheRoutes;
-        //}
-
-        //private void AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, int minFreeHours)
-        //{
-        //    while (routes.Count > 0)
-        //    {
-        //        bool routeAssigned = false;
-
-        //        foreach (var employee in employees)
-        //        {
-        //            if (routes.Count > 0)
-        //            {
-        //                var route = routes[0];
-        //                var routeDuration = CalculateRouteDuration(route);
-        //                var routeDay = route.RouteDate.Date;
-        //                var routeStartTime = route.Assignments.First().ArrivalTime;
-        //                var routeEndTime = route.Assignments.Last().ArrivalTime.AddSeconds(routeDuration);
-
-        //                if (!employee.WorkHoursPerDayInSeconds.ContainsKey(routeDay))
-        //                {
-        //                    employee.WorkHoursPerDayInSeconds[routeDay] = 0;
-        //                    employee.WorkBlocksPerDay[routeDay] = new List<(TimeSpan, TimeSpan)>();
-        //                }
-
-        //                double fourWeekAverage = (employee.PastFourWeeksWorkHoursInSeconds.Sum() + routeDuration) / (employee.PastFourWeeksWorkHoursInSeconds.Count + 1);
-
-        //                int maxWorkHoursPerWeekInSeconds = employee.Weeklyworkhours * 60 * 60;
-
-        //                // Check for 55-hour continuous free time
-        //                bool hasEnoughFreeTime = CheckForContinuousFreeTime(employee.WorkBlocksPerDay, minFreeHours);
-
-        //                if (employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= maxWorkHoursPerWeekInSeconds &&
-        //                    fourWeekAverage <= maxWorkHoursPerWeekInSeconds &&
-        //                    employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60 &&
-        //                    hasEnoughFreeTime)
-        //                {
-        //                    employee.Routes.Add(route);
-        //                    employee.WorkhoursWithincurentWeekInSeconds += routeDuration;
-        //                    employee.WorkHoursPerDayInSeconds[routeDay] += routeDuration;
-        //                    employee.WorkBlocksPerDay[routeDay].Add((routeStartTime.TimeOfDay, routeEndTime.TimeOfDay));
-
-        //                    routes.RemoveAt(0);
-        //                    routeAssigned = true;
-        //                }
-        //            }
-        //        }
-
-        //        if (!routeAssigned)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //}
-
-
-        //private bool CheckForContinuousFreeTime(Dictionary<DateTime, List<(TimeSpan Start, TimeSpan End)>> workBlocksPerDay, int minFreeHours)
-        //{
-        //    // Sort work blocks and check for continuous free time
-        //    foreach (var day in workBlocksPerDay.Keys)
-        //    {
-        //        var workBlocks = workBlocksPerDay[day];
-        //        workBlocks.Sort((a, b) => a.Start.CompareTo(b.Start));
-
-        //        TimeSpan lastEndTime = TimeSpan.Zero;
-
-        //        foreach (var block in workBlocks)
-        //        {
-        //            var freeTime = block.Start - lastEndTime;
-        //            if (freeTime.TotalHours >= minFreeHours)
-        //            {
-        //                return true;
-        //            }
-        //            lastEndTime = block.End;
-        //        }
-
-        //        // Check free time after the last work block until midnight
-        //        var remainingTime = TimeSpan.FromHours(24) - lastEndTime;
-        //        if (remainingTime.TotalHours >= minFreeHours)
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-
-        //private double CalculateRouteDuration(RouteEntity route)
-        //{
-        //    // Calculate the total duration of the route based on the assignments
-        //    return route.Assignments.Sum(a => a.Duration);
-        //}
-
-
-
-
-
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
+        /// <summary>
+        /// This method Generates a schema for assigning routes to employees based on their availability and type. This is the main method to call the rest.
+        /// </summary>
+        /// <param name="routes">List of routes to be assigned.</param>
         public void GenerateSchema(List<RouteEntity> routes)
         {
+            // Group the list of routes by week, where the week starts on Monday
             var groups = routes.GroupBy(r => r.RouteDate.Date.AddDays(-(int)r.RouteDate.DayOfWeek + (int)DayOfWeek.Monday)).Select(group => group.ToList()).ToList();
 
+            // Loop through each group of routes (each week)
             foreach (var group in groups)
             {
+                // Split the routes into long and short routes
                 var splitRoutes = SplitRoutesByTime(group);
 
+                // Fetch all employees from the database and categorize them based on their weekly work hours
                 var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
-                var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
+                var employeesPartTime30Hours = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 30).ToList();
+                var employeesPartTime25Hours = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 25).ToList();
                 var employeesSubstitutes = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours > 40).ToList();
 
+                // Reset the current week's work hours for all employees
                 employeesFullTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
-                employeesPartTime.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+                employeesPartTime30Hours.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
+                employeesPartTime25Hours.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
                 employeesSubstitutes.ForEach(e => e.WorkhoursWithincurentWeekInSeconds = 0);
 
+                // Update the work hours for the past four weeks for each category of employees
                 UpdateFourWeekWorkHours(employeesFullTime);
-                UpdateFourWeekWorkHours(employeesPartTime);
+                UpdateFourWeekWorkHours(employeesPartTime30Hours);
+                UpdateFourWeekWorkHours(employeesPartTime25Hours);
                 UpdateFourWeekWorkHours(employeesSubstitutes);
 
-                var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime, employeesSubstitutes);
+                // Assign routes to employees and get the list of employees who have been assigned routes
+                var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime30Hours, employeesPartTime25Hours, employeesSubstitutes);
 
+                // Add the employees to the routes in the database
                 _employeesRepo.AddEmployeesToRoute(result);
             }
         }
 
-        private void UpdateFourWeekWorkHours(List<EmployeeEntity> employees)
-        {
-            foreach (var employee in employees)
-            {
-                if (employee.PastFourWeeksWorkHoursInSeconds.Count >= 4)
-                {
-                    employee.PastFourWeeksWorkHoursInSeconds.Dequeue();
-                }
-                employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
-            }
-        }
 
+
+        /// <summary>
+        /// This method Splits a list of routes into two categories: long routes and short routes.
+        /// </summary>
+        /// <param name="routes">List of routes to be split.</param>
+        /// <returns>A list containing two lists: one for long routes and one for short routes.</returns>
         private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
         {
+            // Initialize lists to hold long and short routes
             var longRoutes = new List<RouteEntity>();
             var shortRoutes = new List<RouteEntity>();
 
+            // Loop through each route in the list
             foreach (RouteEntity routeEntity in routes)
             {
+                // Calculate the total time for the route
                 var totalTime = routeEntity.Assignments.Last().ArrivalTime - routeEntity.Assignments.First().ArrivalTime;
+
+                // Check if the route is longer than 5 hours
                 if (totalTime > TimeSpan.FromHours(5))
                 {
                     longRoutes.Add(routeEntity);
@@ -280,71 +99,127 @@ namespace ComfortCare.Domain.BusinessLogic
                 }
             }
 
+            // Return the lists of long and short routes
             return new List<List<RouteEntity>> { longRoutes, shortRoutes };
         }
 
-        // This method assigns routes to employees based on their type and availability
-        private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime, List<EmployeeEntity> employeesSubstitutes)
+
+
+
+        /// <summary>
+        /// This method Updates the work hours for the past four weeks for each employee.
+        /// </summary>
+        /// <param name="employees">List of employees whose work hours need to be updated.</param>
+        private void UpdateFourWeekWorkHours(List<EmployeeEntity> employees)
         {
+            // Loop through each employee in the list
+            foreach (var employee in employees)
+            {
+                // Check if the employee's work hours for the past four weeks are already stored
+                if (employee.PastFourWeeksWorkHoursInSeconds.Count >= 4)
+                {
+                    // Remove the oldest work hours data to make room for the new week
+                    employee.PastFourWeeksWorkHoursInSeconds.Dequeue();
+                }
+
+                // Add the current week's work hours to the queue
+                employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// This method Assigns routes to employees based on their type (Full-Time, Part-Time 30 Hours, Part-Time 25 Hours, Substitute) and availability.
+        /// </summary>
+        /// <param name="splitRoutes">List of routes, split based on some criteria.</param>
+        /// <param name="employeesFullTime">List of full-time employees.</param>
+        /// <param name="employeesPartTime30Hours">List of part-time employees with 30 hours per week.</param>
+        /// <param name="employeesPartTime25Hours">List of part-time employees with 25 hours per week.</param>
+        /// <param name="employeesSubstitutes">List of substitute employees.</param>
+        /// <returns>List of employees who have been assigned routes.</returns>
+        private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime30Hours, List<EmployeeEntity> employeesPartTime25Hours, List<EmployeeEntity> employeesSubstitutes)
+        {
+            // Initialize a list to keep track of employees who are needed for the routes
             var employeesNeededForTheRoutes = new List<EmployeeEntity>();
 
-            // Assign routes to full-time, part-time, and substitute employees
+            // Assign long routes to full-time employees
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime);
-            //AssignRoutesToSpecificEmployees(splitRoutes[1], employeesFullTime);
-            //AssignRoutesToSpecificEmployees(splitRoutes[0], employeesPartTime);
-            AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime);
+
+            // Assign long routes to part-time 30 hours employees
+            AssignRoutesToSpecificEmployees(splitRoutes[0], employeesPartTime30Hours);
+
+            // Assign short routes to part-time 25 hours employees
+            AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime25Hours);
+
+            // Assign both long and short routes to substitute employees if there is no more normal employees left
             AssignRoutesToSpecificEmployees(splitRoutes[0], employeesSubstitutes);
             AssignRoutesToSpecificEmployees(splitRoutes[1], employeesSubstitutes);
 
-            // Combine all employees who have been assigned routes
+            // Combine all employees who have been assigned routes into a single list
             employeesNeededForTheRoutes.AddRange(employeesFullTime);
-            employeesNeededForTheRoutes.AddRange(employeesPartTime);
+            employeesNeededForTheRoutes.AddRange(employeesPartTime30Hours);
+            employeesNeededForTheRoutes.AddRange(employeesPartTime25Hours);
             employeesNeededForTheRoutes.AddRange(employeesSubstitutes);
 
+            // Return the list of employees who have been assigned routes
             return employeesNeededForTheRoutes;
         }
 
-        // Modified AssignRoutesToSpecificEmployees method
+
+        /// <summary>
+        /// This method Assigns routes to specific employees based on their availability and work hours.
+        /// </summary>
+        /// <param name="routes">List of routes to be assigned.</param>
+        /// <param name="employees">List of employees to whom routes can be assigned to.</param>
         private void AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees)
         {
-            while (routes.Count > 0)
-            {
-                bool routeAssigned = false;
+            // Flag to indicate whether a route has been successfully assigned in the current iteration
+            bool routeAssigned = false;
 
+            // Loop until all routes are assigned
+            while (routes.Any())
+            {
+                // Sort employees by their already assigned work hours to prioritize those with fewer hours
+                employees = employees.OrderBy(e => e.WorkhoursWithincurentWeekInSeconds).ToList();
+
+                // Iterate through each employee to try and assign a route
                 foreach (var employee in employees)
                 {
-                    if (routes.Count > 0)
+                    // Check if there are still routes to assign
+                    if (routes.Any())
                     {
-                        var route = routes[0];
+                        // Get the first route and its details
+                        var route = routes.First();
                         var routeDuration = CalculateRouteDuration(route);
                         var routeDay = route.RouteDate.Date;
 
-                        if (!employee.WorkHoursPerDayInSeconds.ContainsKey(routeDay))//Ensuring that only one run is added per day
+                        // Initialize work hours for the route day if not already present
+                        if (!employee.WorkHoursPerDayInSeconds.ContainsKey(routeDay))
                         {
                             employee.WorkHoursPerDayInSeconds[routeDay] = 0;
                         }
-                        {
-                            employee.WorkHoursPerDayInSeconds[routeDay] = 0;
-                        }
-                        //Calculating the average work hours per week over the last 4 weeks
+
+                        // Calculate the four-week average work hours for the employee
                         double fourWeekAverage = (employee.PastFourWeeksWorkHoursInSeconds.Sum() + routeDuration) / (employee.PastFourWeeksWorkHoursInSeconds.Count + 1);
 
-                        if (employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60 &&//Ensuring that the employee does not work more than their max hours per week
-                            fourWeekAverage <= employee.Weeklyworkhours * 60 * 60 && //Ensuring that the employee does not work more than their max hours per week averaged over 4 weeks
-                            employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60) //Ensuring that the employee does not work more than 12 hours per day
+                        // Check if the employee is available to take the route
+                        if (IsEmployeeAvailableForRoute(employee, routeDuration, fourWeekAverage, routeDay))
                         {
-                            // Add the route to the employee's list of routes
-                            employee.Routes.Add(route);
-                            // the routes duration to the employee's total work hours both on week and day
-                            employee.WorkhoursWithincurentWeekInSeconds += routeDuration;
-                            employee.WorkHoursPerDayInSeconds[routeDay] += routeDuration;
+                            // Assign the route to the employee
+                            AssignRouteToEmployee(employee, route, routeDuration, routeDay);
 
+                            // Remove the assigned route from the list
                             routes.RemoveAt(0);
+
+                            // Set the flag to indicate a successful assignment
                             routeAssigned = true;
                         }
                     }
                 }
 
+                // Break the loop if no route could be assigned in the current iteration
                 if (!routeAssigned)
                 {
                     break;
@@ -353,101 +228,136 @@ namespace ComfortCare.Domain.BusinessLogic
         }
 
 
+
+        /// <summary>
+        /// This method is used to calculate the total duration of a route
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
         private double CalculateRouteDuration(RouteEntity route)
         {
-            // Calculate the total duration of the route based on the assignments
             return route.Assignments.Sum(a => a.Duration);
+        }
+
+
+        /// <summary>
+        /// This method is used to check if an employee is available for a specific route
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <param name="routeDuration"></param>
+        /// <param name="fourWeekAverage"></param>
+        /// <param name="routeDay"></param>
+        /// <returns></returns>
+        private bool IsEmployeeAvailableForRoute(EmployeeEntity employee, double routeDuration, double fourWeekAverage, DateTime routeDay)
+        {
+            // Constants
+            const double RequiredHoursOff = 55 * 60 * 60;  // 55 hours converted to seconds
+
+            // Initialize variable to keep track of consecutive free time in seconds
+            double consecutiveFreeTimeInSeconds = 0;
+
+            // Initialize variable to keep track of whether the employee has the required free time
+            bool hasRequiredFreeTime = true;
+
+
+            // Check if the employee's work hours for the current week and route duration do not exceed the weekly limit
+            bool withinWeeklyLimit = employee.WorkhoursWithincurentWeekInSeconds + routeDuration <= employee.Weeklyworkhours * 60 * 60;
+
+            // Check if the four-week average work hours do not exceed the weekly limit
+            bool withinFourWeekLimit = fourWeekAverage <= employee.Weeklyworkhours * 60 * 60;
+
+            // Check if the employee's work hours for the given day and route duration do not exceed the daily limit of 12 hours
+            bool withinDailyLimit = employee.WorkHoursPerDayInSeconds[routeDay] + routeDuration <= 12 * 60 * 60;
+
+            //TODO: Remove in production
+            if (employee.EmployeeId == 4)
+            {
+                Console.WriteLine("employeeID: " + employee.EmployeeId);
+            }
+            // Check if the employee has already a route assigned for the current day.
+            bool isEmployeeFreeToBeAssignedToRoute = !employee.Routes.Any(r => r.RouteDate.Date == routeDay);
+
+            // Sort WorkingDaysList in the EmployeeEntity by RouteStart
+            employee.WorkingDaysList.Sort((a, b) => a.RouteStart.CompareTo(b.RouteStart));
+
+            // Ensure the list only contains the last 7 days
+            while (employee.WorkingDaysList.Count > 7)
+            {
+                employee.WorkingDaysList.RemoveAt(0);
+            }
+
+            // Initialize variable to keep track of the last work day's end time
+            DateTime lastWorkDayEndTime = DateTime.MinValue;
+
+            //TODO: Remove unused code before deployment
+            //// Check for 55 consecutive free hours within the last 7 days (NOT WORKING)
+            //foreach (var workDay in employee.WorkingDaysList)
+            //{
+
+            //    if (workDay.RouteEnd != DateTime.MinValue)
+            //    {
+            //        var timeDifferenceInSeconds = (workDay.RouteStart - lastWorkDayEndTime).TotalSeconds;
+            //        if (timeDifferenceInSeconds > RequiredHoursOff)
+            //        {
+            //            consecutiveFreeTimeInSeconds = timeDifferenceInSeconds;
+            //            break;
+            //        }
+            //        lastWorkDayEndTime = workDay.RouteEnd;
+            //    }
+
+            //    lastWorkDayEndTime = workDay.RouteEnd;
+            //}
+            //if (employee.WorkingDaysList.Count > 5)
+            //{
+            //    // Check if the employee had 55 consecutive free hours
+            //    hasRequiredFreeTime = consecutiveFreeTimeInSeconds >= RequiredHoursOff;
+
+            //}
+
+            // Return true only if all conditions are met and the employee is not already assigned on the same day
+            return withinWeeklyLimit && withinFourWeekLimit && withinDailyLimit && hasRequiredFreeTime && isEmployeeFreeToBeAssignedToRoute;
+        }
+
+
+
+        /// <summary>
+        /// This method Assigns a route to an employee and updates relevant fields.
+        /// </summary>
+        /// <param name="employee">The employee to whom the route will be assigned.</param>
+        /// <param name="route">The route to be assigned.</param>
+        /// <param name="routeDuration">The duration of the route in seconds.</param>
+        /// <param name="routeDay">The day on which the route is assigned.</param>
+        private void AssignRouteToEmployee(EmployeeEntity employee, RouteEntity route, double routeDuration, DateTime routeDay)
+        {
+            // Add the route to the employee's list of routes
+            employee.Routes.Add(route);
+
+            // Update the total work hours for the current week by adding the route duration
+            employee.WorkhoursWithincurentWeekInSeconds += routeDuration;
+
+            // Update the work hours for the specific day by adding the route duration
+            employee.WorkHoursPerDayInSeconds[routeDay] += routeDuration;
+
+            // Get the start and end times of the route from the first and last assignments
+            DateTime routeStartTime = route.Assignments.First().ArrivalTime;
+            DateTime routeEndTime = route.Assignments.Last().ArrivalTime;
+
+            // Initialize the work block list for the day if it doesn't exist
+            if (!employee.WorkBlocksPerDay.ContainsKey(routeDay))
+            {
+                employee.WorkBlocksPerDay[routeDay] = new List<(DateTime Start, DateTime End)>();
+            }
+
+            // Add the route's start and end times to the work blocks for the day
+            employee.WorkBlocksPerDay[routeDay].Add((routeStartTime, routeEndTime));
+
+            // Add the route information to the WorkingDaysList
+            employee.WorkingDaysList.Add(new TimeSpanEntity { RouteStart = routeStartTime, RouteEnd = routeEndTime });
         }
 
 
 
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-        //public void GenerateSchema(List<RouteEntity> routes)
-        //{
-
-        //    var groups = routes.GroupBy(r => r.RouteDate).Select(group => group.ToList()).ToList();
-
-        //    for (int i = 0; i < groups.Count - 1; i++)
-        //    {
-
-        //        // Split routes into two categories based on total time
-        //        var splitRoutes = SplitRoutesByTime(groups[i]);
-
-        //        // Get all employees and split them into full-time and part-time
-        //        var employeesFullTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours == 40).ToList();
-        //        var employeesPartTime = _employeesRepo.GetAllEmployees().Where(e => e.Weeklyworkhours < 40).ToList();
-
-        //        // Assign routes to employees based on their working hours
-        //        var result = AssignRoutesToEmployees(splitRoutes, employeesFullTime, employeesPartTime);
-
-        //        _employeesRepo.AddEmployeesToRoute(result);
-        //    }
-        //}
-
-        //private List<List<RouteEntity>> SplitRoutesByTime(List<RouteEntity> routes)
-        //{
-        //    var longRoutes = new List<RouteEntity>();
-        //    var shortRoutes = new List<RouteEntity>();
-
-        //    foreach (RouteEntity routeEntity in routes)
-        //    {
-        //        var totalTime = routeEntity.Assignments.Last().ArrivalTime - routeEntity.Assignments.First().ArrivalTime;
-        //        if (totalTime > TimeSpan.FromHours(5))
-        //        {
-        //            longRoutes.Add(routeEntity);
-        //        }
-        //        else
-        //        {
-        //            shortRoutes.Add(routeEntity);
-        //        }
-        //    }
-
-        //    return new List<List<RouteEntity>> { longRoutes, shortRoutes };
-        //}
-
-        //private List<EmployeeEntity> AssignRoutesToEmployees(List<List<RouteEntity>> splitRoutes, List<EmployeeEntity> employeesFullTime, List<EmployeeEntity> employeesPartTime)
-        //{
-        //    var employeesNeededForTheRoutes = new List<EmployeeEntity>();
-
-        //    AssignRoutesToSpecificEmployees(splitRoutes[0], employeesFullTime, employeesNeededForTheRoutes);
-
-        //    AssignRoutesToSpecificEmployees(splitRoutes[1], employeesPartTime, employeesNeededForTheRoutes);
-
-        //    return employeesNeededForTheRoutes;
-        //}
-
-        //private List<EmployeeEntity> AssignRoutesToSpecificEmployees(List<RouteEntity> routes, List<EmployeeEntity> employees, List<EmployeeEntity> employeesNeededForTheRoutes)
-        //{
-        //    foreach (var employee in employees)
-        //    {
-        //        if (routes.Count > 0)
-        //        {
-        //            employee.Route = routes[0];
-        //            employeesNeededForTheRoutes.Add(employee);
-        //            routes.RemoveAt(0);
-        //        }
-        //        else
-        //        {
-        //            break;
-        //        }
-        //    }
-        //    return employeesNeededForTheRoutes;
-        //}
         #endregion
     }
 }
