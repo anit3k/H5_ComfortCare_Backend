@@ -30,7 +30,7 @@ namespace ComfortCare.Domain.BusinessLogic
         /// <param name="numberOfAssignments">The number of assignments for each day</param>
         public void CalculateNewPeriod(int numberOfDays, int numberOfAssignments)
         {
-            var routes = _routeGen.CalculateDaylyRoutes(numberOfDays, numberOfAssignments);
+            var routes = _routeGen.CalculateDailyRoutes(numberOfDays, numberOfAssignments);
             _schemaGen.GenerateSchema(routes);
         }
         #endregion
