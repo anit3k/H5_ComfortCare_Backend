@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Context used by EF Core
 builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 {
     var configuration = builder.Configuration;
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
 }
  );
 
+// Dependency injections
 builder.Services.AddTransient<RouteGenerator>();
 builder.Services.AddTransient<SchemaGenerator>();
 builder.Services.AddTransient<IPeriodManager, PeriodManager>();
@@ -48,6 +50,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(_allowAllOriginsForDevelopment);
 app.UseAuthorization();
 
 app.MapControllers();

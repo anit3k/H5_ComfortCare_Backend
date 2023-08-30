@@ -73,20 +73,6 @@ namespace ComfortCare.Api.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         #endregion
 
         #region Methods
@@ -101,7 +87,7 @@ namespace ComfortCare.Api.Controllers
             var result = new EmployeeScheduleDto
             {
                 Name = "Fiktiv bruger",
-                Assignments = new List<AssignmentDTO>()
+                Assignments = new List<AssignmentDto>()
             };
 
             var citizenNames = new[] {
@@ -136,7 +122,7 @@ namespace ComfortCare.Api.Controllers
             {
                 for (int assignmentsPrDay = 0; assignmentsPrDay < 5; assignmentsPrDay++)
                 {
-                    var assignment = new AssignmentDTO
+                    var assignment = new AssignmentDto
                     {
                         Titel = assignmentTitles[random.Number(0, assignmentTitles.Length - 1)],
                         Description = lorem.Paragraphs(2),
@@ -255,10 +241,7 @@ namespace ComfortCare.Api.Controllers
         #endregion
     }
 
-
-
-
-    #region DtoClasses
+    #region DtoClasses used only in dev/test
 
     /// <summary>
     /// This class is used to get the route details
@@ -302,10 +285,5 @@ namespace ComfortCare.Api.Controllers
         public DateTime ArrivalTime { get; set; }
         public DateTime EndTime { get; set; }
     }
-
-
-
-
-
     #endregion
 }

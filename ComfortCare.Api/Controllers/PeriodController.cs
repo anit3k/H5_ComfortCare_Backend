@@ -1,5 +1,4 @@
 ﻿using ComfortCare.Api.Models;
-using ComfortCare.Data.Interfaces;
 using ComfortCare.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

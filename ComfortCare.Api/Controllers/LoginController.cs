@@ -51,11 +51,11 @@ namespace ComfortCare.Api.Controllers
                     {
                         employeeDto.Name = result.Name;
 
-                        employeeDto.Assignments = new List<AssignmentDTO>();                        
+                        employeeDto.Assignments = new List<AssignmentDto>();                        
 
                         foreach (var assignmentData in result.Assignments)
                         {
-                            AssignmentDTO assignmentDto = new AssignmentDTO
+                            AssignmentDto assignmentDto = new AssignmentDto
                             {
                                 Titel = assignmentData.Title,
                                 Description = assignmentData.Description,
