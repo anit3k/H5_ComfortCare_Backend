@@ -3,7 +3,7 @@
 namespace ComfortCare.Domain.BusinessLogic.interfaces
 {
     /// <summary>
-    /// This interface is used by the plan-manager to get data from the datasource
+    /// This interface is used by the period manager to get data from the data source
     /// </summary>
     public interface IRouteRepo
     {

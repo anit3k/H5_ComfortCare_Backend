@@ -22,6 +22,15 @@ namespace ComfortCare.Domain.BusinessLogic
         #endregion
 
         #region Methods
+        /// <summary>
+        /// This is the algorithm that calculates the routes, it basically sorts the list of assignment within the current 
+        /// time frame and finds the next assignment with the shortest distance in time, and it to the route.
+        /// It will continue until the is no next potential assignment, and the restart the loop until there is 
+        /// no assignment left that current day
+        /// </summary>
+        /// <param name="numberOfDays"></param>
+        /// <param name="numberOfAssigments"></param>
+        /// <returns></returns>
         public List<RouteEntity> CalculateDaylyRoutes(int numberOfDays, int numberOfAssigments)
         {
             List<RouteEntity> plannedRoutes = new List<RouteEntity>();
