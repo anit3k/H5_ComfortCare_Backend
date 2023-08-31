@@ -11,7 +11,7 @@ This solution contains both the domain layer, service layer, data layer and our 
 ## Table of contents
 
 <!-- TABLE OF CONTENTS -->
-  <ol style="list-style: none;">
+  <ol style="list-style-type: none;">
     <li>
       <a href="#ComfortCare.Api">GATEWAY</a>
       <ul>
