@@ -16,7 +16,7 @@ This solution contains both the domain layer, service layer, data layer and our 
         <ul>
             <li style="list-style: none;">
                 <a href="ComfortCare.Api/Controllers/LoginController.cs">Login Controller</a>
-                <p>Her kan du finde vores login controller, som håndtere brugerens login informationer.</p>
+                > Her kan du finde vores login controller, som håndtere brugerens login informationer.
             </li>
             <li style="list-style: none;"><a href="ComfortCare.Api/Controllers/PeriodController.cs">Period Controller</a></li>
         </ul>
