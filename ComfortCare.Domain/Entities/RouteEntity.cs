@@ -5,11 +5,6 @@
     /// </summary>
     public class RouteEntity
     {
-        //#region fields
-        //private double _totalRouteTimeInHours;
-        //private int _numberOfAssignments;
-        //#endregion
-
         #region Shorthand properties
         public Guid RouteGuid { get; set; }
         public List<AssignmentEntity> Assignments { get; set; }
