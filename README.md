@@ -9,20 +9,20 @@ Backend for the app Comfort care.
 This solution contains both the domain layer, service layer, data layer and our API.
 
 ## Table of contents
-<h1><a href="#ComfortCare.Api">GATEWAY</a></h1>
+<h1><a href="ComfortCare.Api">GATEWAY</a></h1>
 <ul>
     <li style="list-style: none;">
-        <a href="#Controllers">Controller</a>
+        <a href="ComfortCare.Api/Controllers">Controller</a>
         <ul>
-            <li style="list-style: none;"><a href="#Controllers/LoginController">Login Controller</a></li>
-            <li style="list-style: none;"><a href="#Controllers/PeriodController">Period Controller</a></li>
+            <li style="list-style: none;"><a href="ComfortCare.Api/Controllers/LoginController.cs">Login Controller</a></li>
+            <li style="list-style: none;"><a href="ComfortCare.Api/Controllers/PeriodController.cs">Period Controller</a></li>
         </ul>
     </li>
 </ul>
-<h1><a href="#Service">Service</a></h1>
+<h1><a href="ComfortCare.Service">Service</a></h1>
 <ul>
-    <li style="list-style: none;"><a href="#Service/PeriodService">Period Service</a></li>
-    <li style="list-style: none;"><a href="#Service/UserService">User Service</a></li>
+    <li style="list-style: none;"><a href="ComfortCare.Service/PeriodService.cs">Period Service</a></li>
+    <li style="list-style: none;"><a href="ComfortCare.Service/UserService.cs">User Service</a></li>
 </ul>
 <h1><a href="#Data">Data</a></h1>
 <ul>
