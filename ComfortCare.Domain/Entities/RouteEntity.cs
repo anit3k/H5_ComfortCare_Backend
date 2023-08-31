@@ -5,10 +5,10 @@
     /// </summary>
     public class RouteEntity
     {
-        #region fields
-        private double _totalRouteTimeInHours;
-        private int _numberOfAssignments;
-        #endregion
+        //#region fields
+        //private double _totalRouteTimeInHours;
+        //private int _numberOfAssignments;
+        //#endregion
 
         #region Shorthand properties
         public Guid RouteGuid { get; set; }
@@ -16,7 +16,7 @@
         public DateTime RouteDate { get; set; }
         #endregion
 
-        #region Full body properties
+        #region Properties
         public double TotalRouteTimeInHours
         {
             get { return ((Assignments.Last().ArrivalTime.AddSeconds(Assignments.Last().Duration) - Assignments.First().ArrivalTime).TotalHours); }

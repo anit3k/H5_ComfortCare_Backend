@@ -75,7 +75,7 @@ namespace ComfortCare.Domain.BusinessLogic
                             if (totalCurrentRouteHours < 8.8)
                             {
                                 UpdateRouteTimeAndAssignment(nextAssignment, ref routeTimeTracker, route, distances);
-                                currentAssignment = nextAssignment; 
+                                currentAssignment = nextAssignment;
                             }
                             else
                             {
