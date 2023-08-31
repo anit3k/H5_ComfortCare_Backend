@@ -8,10 +8,9 @@ Backend for the app Comfort care.
 
 This solution contains both the domain layer, service layer, data layer and our API.
 
-## Content
+## Table of contents
 
 <!-- TABLE OF CONTENTS -->
-<details>
   <ol>
     <li>
       <a href="#ComfortCare.Api">GATEWAY</a>
