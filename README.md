@@ -1,3 +1,9 @@
+<style>
+    li {
+        list-style: none;
+    }
+</style>
+
 <a name="readme-top"></a>
 
 # Comfort Care.
@@ -52,4 +58,4 @@ This solution contains both the domain layer, service layer, data layer and our 
       </ul>
     </li>
   </ol>
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right"><a href="#readme-top">back to top</a></p>
