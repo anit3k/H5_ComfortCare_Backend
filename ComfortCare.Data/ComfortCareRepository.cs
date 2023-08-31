@@ -73,8 +73,12 @@ namespace ComfortCare.Data
             return result;
         }
 
-        // TODO: refactor these method to fit what ever the route calculator algorithm needs.
-
+        /// <summary>
+        /// This method is getting a complete list of all the employee from the db
+        /// and maps it to the domain entity of an employee, this list is used in the employee
+        /// algorithm to calculate which employee can have witch routes.
+        /// </summary>
+        /// <returns>A List of all the employee entities</returns>
         public List<EmployeeEntity> GetAllEmployees()
         {
             var employeeQuery = _context.Employee
@@ -104,10 +108,11 @@ namespace ComfortCare.Data
             }
             return employees;
         }
-
-
-
        
+        /// <summary>
+        /// This method maps and saves routes to employees in the database
+        /// </summary>
+        /// <param name="employees"></param>
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
             foreach (var employee in employees)
@@ -139,6 +144,12 @@ namespace ComfortCare.Data
             _context.SaveChanges();
         }     
 
+        /// <summary>
+        /// this method validate wheter a user exist in the db
+        /// </summary>
+        /// <param name="username">the users initials</param>
+        /// <param name="password">the users password</param>
+        /// <returns>Returns a boolean, if user exist true, and if not false</returns>
         public bool ValidateUserExist(string username, string password)
         {
             var employeeMatchingUserInput = _context.Employee.Where(e => e.Initials == username && e.EmployeePassword == password).ToList();
@@ -153,6 +164,13 @@ namespace ComfortCare.Data
             }
         }
 
+        /// <summary>
+        /// This method is used to get all the information needed for the current
+        /// employee to show in the UI
+        /// </summary>
+        /// <param name="username">the users initials</param>
+        /// <param name="password">the users password</param>
+        /// <returns>An employee db model object, that contains all the information needed for the route and assignments</returns>
         public Employee GetUsersWorkSchedule(string username, string password)
         {
             var employee = _context.Employee

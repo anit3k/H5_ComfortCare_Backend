@@ -7,19 +7,7 @@
     {
         #region Properties
         public string Name { get; set; }
-        public List<AssignmentDTO> Assignments { get; set; }
-        #endregion
-    }
-
-    public class AssignmentDTO
-    {
-        #region Properties
-        public string Titel { get; set; }
-        public string Description { get; set; }
-        public DateTime StartDate { get; set; }
-        public string CitizenName { get; set; }
-        public string Address { get; set; }
-        public DateTime EndDate { get; set; }
+        public List<AssignmentDto> Assignments { get; set; }
         #endregion
     }
 }

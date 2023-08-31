@@ -3,7 +3,6 @@ using ComfortCare.Domain.Entities;
 
 namespace ComfortCare.Domain.BusinessLogic
 {
-
     /// <summary>
     /// This class is used to populate routes with employees, it should use the rules for working hours
     /// and look at the individual employee to calculate their specific working time etc...
@@ -12,7 +11,6 @@ namespace ComfortCare.Domain.BusinessLogic
     {
         #region Fields
         private readonly IEmployeesRepo _employeesRepo;
-
         #endregion
 
         #region Constructor 
@@ -22,12 +20,7 @@ namespace ComfortCare.Domain.BusinessLogic
         }
         #endregion
 
-
         #region Methods
-
-
-
-
         /// <summary>
         /// This method Generates a schema for assigning routes to employees based on their availability and type. This is the main method to call the rest.
         /// </summary>
@@ -69,8 +62,6 @@ namespace ComfortCare.Domain.BusinessLogic
             }
         }
 
-
-
         /// <summary>
         /// This method Splits a list of routes into two categories: long routes and short routes.
         /// </summary>
@@ -103,9 +94,6 @@ namespace ComfortCare.Domain.BusinessLogic
             return new List<List<RouteEntity>> { longRoutes, shortRoutes };
         }
 
-
-
-
         /// <summary>
         /// This method Updates the work hours for the past four weeks for each employee.
         /// </summary>
@@ -126,9 +114,6 @@ namespace ComfortCare.Domain.BusinessLogic
                 employee.PastFourWeeksWorkHoursInSeconds.Enqueue(employee.WorkhoursWithincurentWeekInSeconds);
             }
         }
-
-
-
 
         /// <summary>
         /// This method Assigns routes to employees based on their type (Full-Time, Part-Time 30 Hours, Part-Time 25 Hours, Substitute) and availability.
@@ -166,7 +151,6 @@ namespace ComfortCare.Domain.BusinessLogic
             // Return the list of employees who have been assigned routes
             return employeesNeededForTheRoutes;
         }
-
 
         /// <summary>
         /// This method Assigns routes to specific employees based on their availability and work hours.
@@ -227,8 +211,6 @@ namespace ComfortCare.Domain.BusinessLogic
             }
         }
 
-
-
         /// <summary>
         /// This method is used to calculate the total duration of a route
         /// </summary>
@@ -287,38 +269,11 @@ namespace ComfortCare.Domain.BusinessLogic
             }
 
             // Initialize variable to keep track of the last work day's end time
-            DateTime lastWorkDayEndTime = DateTime.MinValue;
-
-            //TODO: Remove unused code before deployment
-            //// Check for 55 consecutive free hours within the last 7 days (NOT WORKING)
-            //foreach (var workDay in employee.WorkingDaysList)
-            //{
-
-            //    if (workDay.RouteEnd != DateTime.MinValue)
-            //    {
-            //        var timeDifferenceInSeconds = (workDay.RouteStart - lastWorkDayEndTime).TotalSeconds;
-            //        if (timeDifferenceInSeconds > RequiredHoursOff)
-            //        {
-            //            consecutiveFreeTimeInSeconds = timeDifferenceInSeconds;
-            //            break;
-            //        }
-            //        lastWorkDayEndTime = workDay.RouteEnd;
-            //    }
-
-            //    lastWorkDayEndTime = workDay.RouteEnd;
-            //}
-            //if (employee.WorkingDaysList.Count > 5)
-            //{
-            //    // Check if the employee had 55 consecutive free hours
-            //    hasRequiredFreeTime = consecutiveFreeTimeInSeconds >= RequiredHoursOff;
-
-            //}
+            DateTime lastWorkDayEndTime = DateTime.MinValue;            
 
             // Return true only if all conditions are met and the employee is not already assigned on the same day
             return withinWeeklyLimit && withinFourWeekLimit && withinDailyLimit && hasRequiredFreeTime && isEmployeeFreeToBeAssignedToRoute;
         }
-
-
 
         /// <summary>
         /// This method Assigns a route to an employee and updates relevant fields.
@@ -354,10 +309,6 @@ namespace ComfortCare.Domain.BusinessLogic
             // Add the route information to the WorkingDaysList
             employee.WorkingDaysList.Add(new TimeSpanEntity { RouteStart = routeStartTime, RouteEnd = routeEndTime });
         }
-
-
-
-
         #endregion
     }
 }
