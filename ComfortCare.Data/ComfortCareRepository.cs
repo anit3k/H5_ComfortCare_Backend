@@ -13,11 +13,11 @@ namespace ComfortCare.Data
     public class ComfortCareRepository : IRouteRepo, IEmployeesRepo, IUserRepo
     {
         #region fields
-        private readonly ComfortCareDbContext _context;
+        private readonly IMongoDbContext _context;
         #endregion
 
         #region Constructor
-        public ComfortCareRepository(ComfortCareDbContext context)
+        public ComfortCareRepository(IMongoDbContext context)
         {
             _context = context;
         }
@@ -31,17 +31,17 @@ namespace ComfortCare.Data
         /// <returns>List of assignmentEntities</returns>
         public List<AssignmentEntity> GetNumberOfAssignments(int assignments)
         {
-            var result = _context.Assignment.Include(a => a.AssignmentType).ThenInclude(at => at.TimeFrame).ToList();
+            var result = _context.GetAll<AssignmentDbModel>("AssingmentCollection").ToList();
             List<AssignmentEntity> assignmentEntities = new List<AssignmentEntity>();
 
             for (int i = 0; i < assignments; i++)
             {
                 var temp = new AssignmentEntity()
                 {
-                    Duration = result[i].AssignmentType.DurationInSeconds,
+                    Duration = result[i].DurationInSeconds,
                     Id = result[i].Id,
-                    TimeWindowStart = result[i].AssignmentType.TimeFrame.TimeFrameStart,
-                    TimeWindowEnd = result[i].AssignmentType.TimeFrame.TimeFrameEnd,
+                    TimeWindowStart = result[i].TimeFrameStart,
+                    TimeWindowEnd = result[i].TimeFrameEnd,
                     ArrivalTime = DateTime.MinValue
                 };
                 assignmentEntities.Add(temp);
@@ -56,8 +56,7 @@ namespace ComfortCare.Data
         /// <returns>Returns a list of distances to calculate the shortest routes.</returns>
         public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
-            List<int> assignmentIds = assignmentsForPeriod.Select(a => a.Id).ToList();
-            var distancesQuery = _context.Distance.Where(d => assignmentIds.Contains(d.ResidenceOneId) && assignmentIds.Contains(d.ResidenceTwoId)).ToList();
+            var distancesQuery = _context.GetAll<DistanceDbModel>("DistanceCollection");
             List<DistanceEntity> result = new List<DistanceEntity>();
             foreach (var distance in distancesQuery)
             {
@@ -65,7 +64,7 @@ namespace ComfortCare.Data
                 {
                     AssignmentOne = distance.ResidenceOneId,
                     AssignmentTwo = distance.ResidenceTwoId,
-                    DistanceBetween = distance.Duration
+                    DistanceBetween = distance.Distance
                 };
 
                 result.Add(temp);
@@ -81,18 +80,7 @@ namespace ComfortCare.Data
         /// <returns>A List of all the employee entities</returns>
         public List<EmployeeEntity> GetAllEmployees()
         {
-            var employeeQuery = _context.Employee
-                .Include(ep => ep.EmployeePreference)
-                    .ThenInclude(p => p.Preference)
-                    .ThenInclude(wt => wt.WorkingTimespan)
-                .Include(ep => ep.EmployeePreference)
-                    .ThenInclude(p => p.Preference)
-                    .ThenInclude(dt => dt.DayType)
-                .Include(et => et.EmployeeType)
-                .Include(es => es.EmployeeStatementPeriod)
-                    .ThenInclude(sp => sp.StatementPeriod)
-                .Include(es => es.EmployeeStatementPeriod)
-                    .ThenInclude(tr => tr.TimeRegistration);
+            var employeeQuery = _context.GetAll<EmployeeDbModel>("EmployeeCollection");
 
 
             List<EmployeeEntity> employees = new();
@@ -115,33 +103,33 @@ namespace ComfortCare.Data
         /// <param name="employees"></param>
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
-            foreach (var employee in employees)
-            {
-                var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
+            //foreach (var employee in employees)
+            //{
+            //    var employeeQuery = _context.Employee.Where(e => e.Id == employee.EmployeeId).FirstOrDefault();
 
-                foreach (var route in employee.Routes)
-                {
-                    var employeeRoute = new EmployeeRoute()
-                    {
-                        Employee = employeeQuery,
-                    };
+            //    foreach (var route in employee.Routes)
+            //    {
+            //        var employeeRoute = new EmployeeRoute()
+            //        {
+            //            Employee = employeeQuery,
+            //        };
 
-                    _context.EmployeeRoute.Add(employeeRoute);
+            //        _context.EmployeeRoute.Add(employeeRoute);
 
-                    foreach (var assignment in route.Assignments)
-                    {
-                        var employeeAssignment = new RouteAssignment()
-                        {
-                            EmployeeRoute = employeeRoute,
-                            Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
-                            ArrivalTime = assignment.ArrivalTime
-                        };
+            //        foreach (var assignment in route.Assignments)
+            //        {
+            //            var employeeAssignment = new RouteAssignment()
+            //            {
+            //                EmployeeRoute = employeeRoute,
+            //                Assignment = _context.Assignment.Where(a => a.Id == assignment.Id).FirstOrDefault(),
+            //                ArrivalTime = assignment.ArrivalTime
+            //            };
 
-                        employeeRoute.RouteAssignment.Add(employeeAssignment);
-                    }
-                }
-            }
-            _context.SaveChanges();
+            //            employeeRoute.RouteAssignment.Add(employeeAssignment);
+            //        }
+            //    }
+            //}
+            //_context.SaveChanges();
         }     
 
         /// <summary>
@@ -152,7 +140,7 @@ namespace ComfortCare.Data
         /// <returns>Returns a boolean, if user exist true, and if not false</returns>
         public bool ValidateUserExist(string username, string password)
         {
-            var employeeMatchingUserInput = _context.Employee.Where(e => e.Initials == username && e.EmployeePassword == password).ToList();
+            var employeeMatchingUserInput = _context.Get<EmployeeDbModel>( x => x.Initials == username && x.EmployeePassword == password, "EmployeeDollection").ToList();
 
             if (employeeMatchingUserInput.Count > 0)
             {
@@ -171,22 +159,22 @@ namespace ComfortCare.Data
         /// <param name="username">the users initials</param>
         /// <param name="password">the users password</param>
         /// <returns>An employee db model object, that contains all the information needed for the route and assignments</returns>
-        public Employee GetUsersWorkSchedule(string username, string password)
-        {
-            var employee = _context.Employee
-            .Include(e => e.EmployeeRoute)
-                .ThenInclude(route => route.RouteAssignment)
-                    .ThenInclude(routeAssignment => routeAssignment.Assignment)
-                        .ThenInclude(assignment => assignment.AssignmentType)
-            .Include(e => e.EmployeeRoute)
-                .ThenInclude(route => route.RouteAssignment)
-                    .ThenInclude(routeAssignment => routeAssignment.Assignment)
-                        .ThenInclude(assignment => assignment.Citizen)
-                            .ThenInclude(citizen => citizen.Residence)
-            .FirstOrDefault(e => e.Initials == username && e.EmployeePassword == password);
+        //public Employee GetUsersWorkSchedule(string username, string password)
+        //{
+        //    var employee = _context.Employee
+        //    .Include(e => e.EmployeeRoute)
+        //        .ThenInclude(route => route.RouteAssignment)
+        //            .ThenInclude(routeAssignment => routeAssignment.Assignment)
+        //                .ThenInclude(assignment => assignment.AssignmentType)
+        //    .Include(e => e.EmployeeRoute)
+        //        .ThenInclude(route => route.RouteAssignment)
+        //            .ThenInclude(routeAssignment => routeAssignment.Assignment)
+        //                .ThenInclude(assignment => assignment.Citizen)
+        //                    .ThenInclude(citizen => citizen.Residence)
+        //    .FirstOrDefault(e => e.Initials == username && e.EmployeePassword == password);
 
-            return employee;            
-        }
+        //    return employee;            
+        //}
         #endregion
     }
 }

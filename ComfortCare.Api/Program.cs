@@ -4,7 +4,6 @@ using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Service;
 using ComfortCare.Service.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Context used by EF Core
-builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
+// Mongo db initialization
+builder.Services.AddSingleton<IMongoDbContext>(sp =>
 {
     var configuration = builder.Configuration;
-    var connectionString = configuration.GetConnectionString("ComfortCareDbConnectionString");
-    opt.UseSqlServer(connectionString);
-}
- );
+    var connectionString = configuration.GetSection("ConnectionStrings:MongoDbConnection").Value;
+    return new MongoDbContext(connectionString, "ComfortCareMongoDb");
+});
 
 // Dependency injections
 builder.Services.AddTransient<RouteGenerator>();
