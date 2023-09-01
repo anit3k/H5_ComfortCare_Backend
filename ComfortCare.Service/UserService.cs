@@ -32,23 +32,26 @@ namespace ComfortCare.Service
         {
             var employee = _userRepo.GetUsersWorkSchedule(userName, password);
 
-            var assignmentsData = employee.EmployeeRoute
-                .SelectMany(route => route.RouteAssignment)
-                .Select(routeAssignment => new AssignmentSchemaModel
+            var assignmentData = new List<AssignmentSchemaModel>();
+            foreach (var route in employee)
+            {
+                foreach (var assignment in route.Assignments)
                 {
-                    Title = routeAssignment.Assignment.AssignmentType.Title,
-                    AssignmentTypeDescription = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
-                    Description = routeAssignment.Assignment.AssignmentType.AssignmentTypeDescription,
-                    CitizenName = routeAssignment.Assignment.Citizen.CitizenName,
-                    StartDate = routeAssignment.ArrivalTime,
-                    EndDate = routeAssignment.ArrivalTime.AddSeconds(Convert.ToDouble(routeAssignment.Assignment.AssignmentType.DurationInSeconds)),
-                    Address = routeAssignment.Assignment.Citizen.Residence.CitizenResidence                    
-                }).ToList();
-
+                    var temp = new AssignmentSchemaModel();
+                    temp.Title = assignment.Title;
+                    temp.Description = assignment.Description;
+                    temp.CitizenName = assignment.CitizenName;
+                    temp.Address = assignment.Address;
+                    temp.StartDate = assignment.StartDate;
+                    temp.EndDate = assignment.EndDate;
+                    assignmentData.Add(temp);
+                }
+            }
+            
             var employeeSchema = new EmployeeSchemaModel
             {
-                Name = employee.EmployeeName,
-                Assignments = assignmentsData
+                Name = employee[0].Name,
+                Assignments = assignmentData
             };
 
             return employeeSchema;

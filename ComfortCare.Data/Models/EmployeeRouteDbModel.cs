@@ -1,15 +1,9 @@
 ﻿namespace ComfortCare.Data.Models
 {
-    public class EmployeeRouteDbModel : MongoBaseModel
+    public class EmployeeRouteDbModel
     {
-        public string EmployeeGuid { get; set; }
-        public List<Route> Routes { get; set; }
+        public string initials { get; set; }
+        public string Name { get; set; }
+        public List<EmployeeAssignmentDbModel> Assignments { get; set; }
     }
-
-    public class Route 
-    {
-        public List<string> Assignments { get; set; }
-    }
-
-    
 }
