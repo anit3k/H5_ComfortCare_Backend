@@ -40,7 +40,7 @@ namespace ComfortCare.Data
             collection.InsertOne(entity);
         }
 
-        public void Update<T>(T entity, string collectionName) where T : BaseMongoModel
+        public void Update<T>(T entity, string collectionName) where T : MongoBaseModel
         {
             var collection = _database.GetCollection<T>(collectionName);
             var filter = Builders<T>.Filter.Eq("Id", ObjectId.Parse(entity.Id.ToString()));

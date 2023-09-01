@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace ComfortCare.Data.Models
 {
-    public abstract class BaseMongoModel
+    public abstract class MongoBaseModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
