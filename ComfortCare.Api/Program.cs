@@ -4,7 +4,6 @@ using ComfortCare.Domain.BusinessLogic;
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Service;
 using ComfortCare.Service.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Context used by EF Core
-builder.Services.AddDbContext<ComfortCareDbContext>( opt =>
-{
-    var configuration = builder.Configuration;
-    var connectionString = configuration.GetConnectionString("ComfortCareDbConnectionString");
-    opt.UseSqlServer(connectionString);
-}
- );
+
 
 // Dependency injections
 builder.Services.AddTransient<RouteGenerator>();

@@ -1,8 +1,6 @@
 ﻿using ComfortCare.Data.Interfaces;
-using ComfortCare.Data.Models;
 using ComfortCare.Domain.BusinessLogic.interfaces;
 using ComfortCare.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace ComfortCare.Data
 {
