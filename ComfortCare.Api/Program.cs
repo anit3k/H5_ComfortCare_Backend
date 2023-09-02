@@ -12,7 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+// Mongo db initialization
+builder.Services.AddSingleton<IMongoDbContext>(sp =>
+{
+    var configuration = builder.Configuration;
+    var connectionString = configuration.GetSection("ConnectionStrings:MongoDbConnection").Value;
+    return new MongoDbContext(connectionString, "ComfortCareMongoDb");
+});
 
 // Dependency injections
 builder.Services.AddTransient<RouteGenerator>();
