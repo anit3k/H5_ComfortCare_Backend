@@ -1,6 +1,6 @@
 ﻿namespace ComfortCare.Data.Models
 {
-    public class CitizenDbModel
+    public class CitizenDbModel : MongoBaseModel
     {
         public string CitizenName { get; set; }
         public int ResidenceId { get; set; }

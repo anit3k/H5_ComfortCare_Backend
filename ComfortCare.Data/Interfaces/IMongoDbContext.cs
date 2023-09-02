@@ -6,10 +6,10 @@ namespace ComfortCare.Data.Interfaces
 {
     public interface IMongoDbContext
     {
-        IMongoCollection<T> GetCollection<T>(string collectionName);
+        //IMongoCollection<T> GetCollection<T>(string collectionName);
         void Insert<T>(T entity, string collectionName);
-        void Update<T>(T entity, string collectionName) where T : MongoBaseModel;
-        void Delete<T>(Expression<Func<T, bool>> filter, string collectionName);
+        //void Update<T>(T entity, string collectionName) where T : MongoBaseModel;
+        //void Delete<T>(Expression<Func<T, bool>> filter, string collectionName);
         IEnumerable<T> GetAll<T>(string collectionName);
         IEnumerable<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName);
     }
