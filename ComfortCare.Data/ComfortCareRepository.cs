@@ -55,10 +55,7 @@ namespace ComfortCare.Data
         /// <returns>Returns a list of distances to calculate the shortest routes.</returns>
         public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
-            var assignmentIds = assignmentsForPeriod.Select(a => a.Id).Distinct().ToList();
-            var assignmentQuery = _context.Get<AssignmentDbModel>(a => assignmentIds.Contains(a.AssignmentId), "AssignmentCollection");
-            var residenceIds = assignmentQuery.Select(a => a.ResidenceId).Distinct().ToList();
-            var distancesQuery = _context.Get<DistanceDbModel>(d => residenceIds.Contains(d.ResidenceOneId) || residenceIds.Contains(d.ResidenceTwoId), "DistanceCollection");
+            var distancesQuery = _context.GetAll<DistanceDbModel>("DistanceCollection");
 
             List<DistanceEntity> result = distancesQuery.Select(distance => new DistanceEntity
             {
@@ -70,6 +67,20 @@ namespace ComfortCare.Data
             return result;
         }
 
+        private List<List<int>> GenerateUniquePairs(List<int> sourceList)
+        {
+            var uniquePairs = new List<List<int>>();
+
+            for (int i = 0; i < sourceList.Count - 1; i++)
+            {
+                for (int j = i + 1; j < sourceList.Count; j++)
+                {
+                    uniquePairs.Add(new List<int> { sourceList[i], sourceList[j] });
+                }
+            }
+
+            return uniquePairs;
+        }
 
         /// <summary>
         /// This method is getting a complete list of all the employeeRoute from the db

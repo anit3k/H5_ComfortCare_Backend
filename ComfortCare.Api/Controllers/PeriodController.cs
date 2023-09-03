@@ -1,6 +1,7 @@
 ﻿using ComfortCare.Api.Models;
 using ComfortCare.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ComfortCare.Api.Controllers
 {
@@ -27,7 +28,18 @@ namespace ComfortCare.Api.Controllers
         [HttpPost("CalculatePeriod")]
         public IActionResult CalculatePeriod(PeriodDto periodDto) 
         {
+#if DEBUG
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Console.WriteLine("---- Enter Period Controller -----");
+#endif
             _periodService.CreatePeriod(periodDto.NumberOfDays, periodDto.NumberOfAssigments);
+
+#if DEBUG
+            stopwatch.Stop(); // Stop the stopwatch
+            double elapsedMinutes = stopwatch.Elapsed.TotalMinutes;
+            Console.WriteLine($"---- Periode controlller exit at the time: {elapsedMinutes} ----");
+#endif
             return Ok();
         }
         #endregion
