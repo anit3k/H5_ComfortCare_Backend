@@ -33,13 +33,13 @@ namespace ComfortCare.Data
             collection.InsertOne(entity);
         }
 
-        public IEnumerable<T> GetAll<T>(string collectionName)
+        public List<T> GetAll<T>(string collectionName)
         {
             var collection = _database.GetCollection<T>(collectionName);
             return collection.Find(_ => true).ToList();
         }
 
-        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName)
+        public List<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName)
         {
             var collection = _database.GetCollection<T>(collectionName);
             return collection.Find(filter).ToList();

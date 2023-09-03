@@ -25,7 +25,7 @@ namespace ComfortCare.Data
         #region Methods
         public List<AssignmentEntity> GetNumberOfAssignments(int assignments)
         {
-            var result = _context.GetAll<AssignmentDbModel>("AssignmentCollection").ToList();
+            var result = _context.GetAll<AssignmentDbModel>("AssignmentCollection");
             List<AssignmentEntity> assignmentEntities = new List<AssignmentEntity>();
 
             for (int i = 0; i < assignments; i++)
@@ -97,7 +97,7 @@ namespace ComfortCare.Data
 
         public bool ValidateUserExist(string username, string password)
         {
-            var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection").ToList();
+            var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection");
 
             if (employeeMatchingUserInput.Count > 0)
             {
