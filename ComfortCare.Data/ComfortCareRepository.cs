@@ -30,7 +30,7 @@ namespace ComfortCare.Data
         /// <returns>List of assignmentEntities</returns>
         public List<AssignmentEntity> GetNumberOfAssignments(int assignments)
         {
-            var result = _context.GetAll<AssignmentDbModel>("AssignmentCollection").ToList();
+            var result = _context.GetAll<AssignmentDbModel>("AssignmentCollection");
             List<AssignmentEntity> assignmentEntities = new List<AssignmentEntity>();
 
             for (int i = 0; i < assignments; i++)
@@ -124,7 +124,7 @@ namespace ComfortCare.Data
         /// <returns>Returns a boolean, if user exist true, and if not false</returns>
         public bool ValidateUserExist(string username, string password)
         {
-            var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection").ToList();
+            var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection");
 
             if (employeeMatchingUserInput.Count > 0)
             {
@@ -145,7 +145,7 @@ namespace ComfortCare.Data
         /// <returns>An employeeRoute db model object, that contains all the information needed for the route and assignments</returns>
         public List<EmployeeRouteDbModel> GetUsersWorkSchedule(string username, string password)
         {
-            return _context.Get<EmployeeRouteDbModel>(r => r.Initials == username, "RouteCollection").ToList();
+            return _context.Get<EmployeeRouteDbModel>(r => r.Initials == username, "RouteCollection");
         }
         #endregion
     }
