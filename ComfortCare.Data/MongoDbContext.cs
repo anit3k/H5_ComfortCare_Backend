@@ -28,7 +28,7 @@ namespace ComfortCare.Data
             ConventionRegistry.Register("MyConventions", conventionPack, t => true);
         }
 
-        public void Insert<T>(T entity, string collectionName) where T: MongoBaseModel
+        public void Insert<T>(T entity, string collectionName) where T : MongoBaseModel
         {
             var collection = _database.GetCollection<T>(collectionName);
             collection.InsertOne(entity);
