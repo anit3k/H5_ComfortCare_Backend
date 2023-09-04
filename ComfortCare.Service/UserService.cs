@@ -22,18 +22,18 @@ namespace ComfortCare.Service
 
         #region Methods
         /// <summary>
-        /// This method gets the employee db model, with all the attributes needed to
+        /// This method gets the employeeRoutes db model, with all the attributes needed to
         /// map the data used in the UI
         /// </summary>
-        /// <param name="userName">the initials of the employee</param>
-        /// <param name="password">the password of the employee</param>
+        /// <param name="userName">the initials of the employeeRoutes</param>
+        /// <param name="password">the password of the employeeRoutes</param>
         /// <returns>A EmployeeSchemaModel with the users task for the current period</returns>
         public EmployeeSchemaModel GetEmployeeSchema(string userName, string password)
         {
-            var employee = _userRepo.GetUsersWorkSchedule(userName, password);
+            var employeeRoutes = _userRepo.GetUsersWorkSchedule(userName, password);
 
             var assignmentData = new List<AssignmentSchemaModel>();
-            foreach (var route in employee)
+            foreach (var route in employeeRoutes)
             {
                 foreach (var assignment in route.Assignments)
                 {
@@ -50,7 +50,7 @@ namespace ComfortCare.Service
 
             var employeeSchema = new EmployeeSchemaModel
             {
-                Name = employee[0].Name,
+                Name = employeeRoutes[0].Name,
                 Assignments = assignmentData
             };
 

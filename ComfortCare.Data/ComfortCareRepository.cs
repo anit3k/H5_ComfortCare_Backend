@@ -5,10 +5,6 @@ using ComfortCare.Domain.Entities;
 
 namespace ComfortCare.Data
 {
-    /// <summary>
-    /// This repository is used by the planmanager to read information from database and save routes calculated for a 
-    /// statement period
-    /// </summary>
     public class ComfortCareRepository : IRouteRepo, IEmployeesRepo, IUserRepo
     {
         #region fields
@@ -45,10 +41,7 @@ namespace ComfortCare.Data
 
         public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
-            var assignmentIds = assignmentsForPeriod.Select(a => a.Id).Distinct().ToList();
-            var assignmentQuery = _context.Get<AssignmentDbModel>(a => assignmentIds.Contains(a.AssignmentId), "AssignmentCollection");
-            var residenceIds = assignmentQuery.Select(a => a.ResidenceId).Distinct().ToList();
-            var distancesQuery = _context.Get<DistanceDbModel>(d => residenceIds.Contains(d.ResidenceOneId) || residenceIds.Contains(d.ResidenceTwoId), "DistanceCollection");
+            var distancesQuery = _context.GetAll<DistanceDbModel>("DistanceCollection");
 
             List<DistanceEntity> result = distancesQuery.Select(distance => new DistanceEntity
             {
@@ -94,7 +87,6 @@ namespace ComfortCare.Data
                 _context.Insert<EmployeeRouteDbModel>(employeeRoute, "RouteCollection");
             }
         }
-
         public bool ValidateUserExist(string username, string password)
         {
             var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection");
@@ -108,10 +100,9 @@ namespace ComfortCare.Data
                 return false;
             }
         }
-
         public Employee GetUsersWorkSchedule(string username, string password)
         {
-            return _context.Get<EmployeeRouteDbModel>(r => r.Initials == username, "RouteCollection").ToList();
+            return _context.Get<EmployeeRouteDbModel>(r => r.Initials == username, "RouteCollection");
         }
         #endregion
     }
