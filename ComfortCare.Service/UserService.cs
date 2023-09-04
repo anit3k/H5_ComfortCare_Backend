@@ -20,10 +20,10 @@ namespace ComfortCare.Service
         #region Methods
         public EmployeeSchemaModel GetEmployeeSchema(string userName, string password)
         {
-            var employee = _userRepo.GetUsersWorkSchedule(userName, password);
+            var employeeRoutes = _userRepo.GetUsersWorkSchedule(userName, password);
 
             var assignmentData = new List<AssignmentSchemaModel>();
-            foreach (var route in employee)
+            foreach (var route in employeeRoutes)
             {
                 foreach (var assignment in route.Assignments)
                 {
@@ -40,7 +40,7 @@ namespace ComfortCare.Service
             
             var employeeSchema = new EmployeeSchemaModel
             {
-                Name = employee[0].Name,
+                Name = employeeRoutes[0].Name,
                 Assignments = assignmentData
             };
 
