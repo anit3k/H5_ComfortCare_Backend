@@ -5,8 +5,8 @@ namespace ComfortCare.Data.Interfaces
 {
     public interface IMongoDbContext
     {
-        public void Insert<T>(T entity, string collectionName) where T : MongoBaseModel;
-        public List<T> GetAll<T>(string collectionName) where T : MongoBaseModel;
-        public List<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName) where T : MongoBaseModel;
+        public void Insert<MB>(MB entity, string collectionName) where MB : MongoBaseModel;
+        public List<MB> GetAll<MB>(string collectionName) where MB : MongoBaseModel;
+        public List<MB> Get<MB>(Expression<Func<MB, bool>> filter, string collectionName) where MB : MongoBaseModel;
     }
 }

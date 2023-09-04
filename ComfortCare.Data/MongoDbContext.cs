@@ -25,24 +25,24 @@ namespace ComfortCare.Data
                     new CamelCaseElementNameConvention(),
                     new IgnoreExtraElementsConvention(true)
                 };
-            ConventionRegistry.Register("MyConventions", conventionPack, t => true);
+            ConventionRegistry.Register("MyConventions", conventionPack, MB => true);
         }
 
-        public void Insert<T>(T entity, string collectionName) where T : MongoBaseModel
+        public void Insert<MB>(MB entity, string collectionName) where MB : MongoBaseModel
         {
-            var collection = _database.GetCollection<T>(collectionName);
+            var collection = _database.GetCollection<MB>(collectionName);
             collection.InsertOne(entity);
         }
 
-        public List<T> GetAll<T>(string collectionName) where T : MongoBaseModel
+        public List<MB> GetAll<MB>(string collectionName) where MB : MongoBaseModel
         {
-            var collection = _database.GetCollection<T>(collectionName);
+            var collection = _database.GetCollection<MB>(collectionName);
             return collection.Find(_ => true).ToList();
         }
 
-        public List<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName) where T : MongoBaseModel
+        public List<MB> Get<MB>(Expression<Func<MB, bool>> filter, string collectionName) where MB : MongoBaseModel
         {
-            var collection = _database.GetCollection<T>(collectionName);
+            var collection = _database.GetCollection<MB>(collectionName);
             return collection.Find(filter).ToList();
         }
     }
