@@ -1,4 +1,5 @@
 ﻿using ComfortCare.Data.Interfaces;
+using ComfortCare.Data.Models;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using System.Linq.Expressions;
@@ -27,19 +28,19 @@ namespace ComfortCare.Data
             ConventionRegistry.Register("MyConventions", conventionPack, t => true);
         }
 
-        public void Insert<T>(T entity, string collectionName)
+        public void Insert<T>(T entity, string collectionName) where T: MongoBaseModel
         {
             var collection = _database.GetCollection<T>(collectionName);
             collection.InsertOne(entity);
         }
 
-        public List<T> GetAll<T>(string collectionName)
+        public List<T> GetAll<T>(string collectionName) where T : MongoBaseModel
         {
             var collection = _database.GetCollection<T>(collectionName);
             return collection.Find(_ => true).ToList();
         }
 
-        public List<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName)
+        public List<T> Get<T>(Expression<Func<T, bool>> filter, string collectionName) where T : MongoBaseModel
         {
             var collection = _database.GetCollection<T>(collectionName);
             return collection.Find(filter).ToList();

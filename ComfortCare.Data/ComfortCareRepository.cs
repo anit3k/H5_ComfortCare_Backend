@@ -5,10 +5,6 @@ using ComfortCare.Domain.Entities;
 
 namespace ComfortCare.Data
 {
-    /// <summary>
-    /// This repository is used by the planmanager to read information from database and save routes calculated for a 
-    /// statement period
-    /// </summary>
     public class ComfortCareRepository : IRouteRepo, IEmployeesRepo, IUserRepo
     {
         #region fields
@@ -23,11 +19,6 @@ namespace ComfortCare.Data
         #endregion
 
         #region Methods
-        /// <summary>
-        /// The method gets the number of assignments to be route calculated
-        /// </summary>
-        /// <param name="assignments">number of assignments from db</param>
-        /// <returns>List of assignmentEntities</returns>
         public List<AssignmentEntity> GetNumberOfAssignments(int assignments)
         {
             var result = _context.GetAll<AssignmentDbModel>("AssignmentCollection");
@@ -48,11 +39,6 @@ namespace ComfortCare.Data
             return assignmentEntities;
         }
 
-        /// <summary>
-        /// Returns a list of distances between citizens that is connected to each other on the assignmentList.
-        /// </summary>
-        /// <param name="assignmentsForPeriod">A list of assignments within the valid period.</param>
-        /// <returns>Returns a list of distances to calculate the shortest routes.</returns>
         public List<DistanceEntity> GetDistanceses(List<AssignmentEntity> assignmentsForPeriod)
         {
             var distancesQuery = _context.GetAll<DistanceDbModel>("DistanceCollection");
@@ -67,27 +53,6 @@ namespace ComfortCare.Data
             return result;
         }
 
-        private List<List<int>> GenerateUniquePairs(List<int> sourceList)
-        {
-            var uniquePairs = new List<List<int>>();
-
-            for (int i = 0; i < sourceList.Count - 1; i++)
-            {
-                for (int j = i + 1; j < sourceList.Count; j++)
-                {
-                    uniquePairs.Add(new List<int> { sourceList[i], sourceList[j] });
-                }
-            }
-
-            return uniquePairs;
-        }
-
-        /// <summary>
-        /// This method is getting a complete list of all the employeeRoute from the db
-        /// and maps it to the domain entity of an employeeRoute, this list is used in the employeeRoute
-        /// algorithm to calculate which employeeRoute can have witch routes.
-        /// </summary>
-        /// <returns>A List of all the employeeRoute entities</returns>
         public List<EmployeeEntity> GetAllEmployees()
         {
             var employeeQuery = _context.GetAll<EmployeeDbModel>("EmployeeCollection");
@@ -102,10 +67,6 @@ namespace ComfortCare.Data
             return employees;
         }
 
-        /// <summary>
-        /// This method maps and saves routes to employees in the database
-        /// </summary>
-        /// <param name="employees"></param>
         public void AddEmployeesToRoute(List<EmployeeEntity> employees)
         {
             var employeesWithRoutes = employees.Where(e => e.Routes.Count > 0).ToList();
@@ -126,13 +87,6 @@ namespace ComfortCare.Data
                 _context.Insert<EmployeeRouteDbModel>(employeeRoute, "RouteCollection");
             }
         }
-
-        /// <summary>
-        /// this method validate wheter a user exist in the db
-        /// </summary>
-        /// <param name="username">the users Initials</param>
-        /// <param name="password">the users password</param>
-        /// <returns>Returns a boolean, if user exist true, and if not false</returns>
         public bool ValidateUserExist(string username, string password)
         {
             var employeeMatchingUserInput = _context.Get<EmployeeDbModel>(x => x.Initials == username && x.EmployeePassword == password, "EmployeeCollection");
@@ -146,14 +100,6 @@ namespace ComfortCare.Data
                 return false;
             }
         }
-
-        /// <summary>
-        /// This method is used to get all the information needed for the current
-        /// employeeRoute to show in the UI
-        /// </summary>
-        /// <param name="username">the users Initials</param>
-        /// <param name="password">the users password</param>
-        /// <returns>An employeeRoute db model object, that contains all the information needed for the route and assignments</returns>
         public List<EmployeeRouteDbModel> GetUsersWorkSchedule(string username, string password)
         {
             return _context.Get<EmployeeRouteDbModel>(r => r.Initials == username, "RouteCollection");
