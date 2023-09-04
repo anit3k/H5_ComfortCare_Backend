@@ -74,7 +74,7 @@ namespace ComfortCare.Domain.BusinessLogic
 
                             if (totalCurrentRouteHours < 8.8)
                             {
-                                UpdateRouteTimeAndAssignment(nextAssignment, ref routeTimeTracker, route, distances);
+                                UpdateRouteTimeAndAssignment(currentAssignment, nextAssignment, ref routeTimeTracker, route, distances);
                                 currentAssignment = nextAssignment;
                             }
                             else
@@ -197,9 +197,9 @@ namespace ComfortCare.Domain.BusinessLogic
         /// <param name="routeTimeTracker"></param>
         /// <param name="route"></param>
         /// <param name="distances"></param>
-        private void UpdateRouteTimeAndAssignment(AssignmentEntity nextAssignment, ref DateTime routeTimeTracker, List<AssignmentEntity> route, List<DistanceEntity> distances)
+        private void UpdateRouteTimeAndAssignment(AssignmentEntity currentAssignment, AssignmentEntity nextAssignment, ref DateTime routeTimeTracker, List<AssignmentEntity> route, List<DistanceEntity> distances)
         {
-            routeTimeTracker = routeTimeTracker.AddSeconds(GetTravelTime(nextAssignment, distances));
+            routeTimeTracker = routeTimeTracker.AddSeconds(GetTravelTime(currentAssignment, nextAssignment, distances));
             nextAssignment.ArrivalTime = routeTimeTracker;
             routeTimeTracker = routeTimeTracker.AddSeconds(nextAssignment.Duration);
             route.Add(nextAssignment);
@@ -211,11 +211,11 @@ namespace ComfortCare.Domain.BusinessLogic
         /// <param name="assignment"></param>
         /// <param name="distances"></param>
         /// <returns>returns travel time in seconds</returns>
-        private double GetTravelTime(AssignmentEntity assignment, List<DistanceEntity> distances)
+        private double GetTravelTime(AssignmentEntity currentAssignment, AssignmentEntity nextAssignment, List<DistanceEntity> distances)
         {
             var currentDistance = distances.FirstOrDefault(d =>
-                (d.AssignmentOne == assignment.Id && d.AssignmentTwo == assignment.Id) ||
-                (d.AssignmentTwo == assignment.Id && d.AssignmentOne == assignment.Id));
+                (d.AssignmentOne == currentAssignment.Id && d.AssignmentTwo == nextAssignment.Id) ||
+                (d.AssignmentTwo == currentAssignment.Id && d.AssignmentOne == nextAssignment.Id));
 
             return currentDistance?.DistanceBetween ?? 0;
         }
